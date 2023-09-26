@@ -1,4 +1,5 @@
 import 'package:fiebooth_portail/components/action_button.dart';
+import 'package:fiebooth_portail/main.dart';
 import 'package:flutter/material.dart';
 
 
@@ -9,20 +10,27 @@ class ButtonInfo {
 }
 
 showSimpleDialog(
-    context, ButtonInfo leftButton, ButtonInfo rightButton, Widget content,
+    ButtonInfo leftButton, ButtonInfo rightButton, Widget content,
     [Widget title = const Placeholder()]) {
   showDialog(
-    context: context,
+    context: globalNavigatorKey.currentContext!,
     builder: (context) {
       return AlertDialog(
-        title: title,
+        titlePadding: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+        title: Container(
+          height: 65,
+          width: double.infinity,
+          color: Theme.of(context).primaryColor,
+          child: Center(child: title,)
+        ),
         content: 
         Container(
           child: content,
         ),
         actions: [
-          /*ActionButton.simpleYellow(leftButton.title, leftButton.action),
-          ActionButton.simpleBlue(rightButton.title, rightButton.action),*/
+          ActionButton.squaredDark(leftButton.title, leftButton.action),
+          ActionButton.squaredLight(rightButton.title, rightButton.action),
         ],
       );
     },

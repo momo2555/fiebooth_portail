@@ -57,6 +57,40 @@ class ActionButton extends StatefulWidget {
       expanded: true,
     );
   }
+  factory ActionButton.action(String text, Function() action) {
+    var context = globalNavigatorKey.currentContext!;
+    return ActionButton(
+      text: text,
+      action: action,
+      backColor: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.onSecondary,
+      rounded: false,
+      filled: true,
+      expanded: true,
+    );
+  }
+  factory ActionButton.squaredLight(String text, Function() action) {
+    var context = globalNavigatorKey.currentContext!;
+    return ActionButton(
+      text: text,
+      action: action,
+      backColor: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.onSecondary,
+      rounded: false,
+      filled: true,
+    );
+  }
+  factory ActionButton.squaredDark(String text, Function() action) {
+    var context = globalNavigatorKey.currentContext!;
+    return ActionButton(
+      text: text,
+      action: action,
+      backColor: Theme.of(context).colorScheme.primary,
+      color: Theme.of(context).colorScheme.onSurface,
+      rounded: false,
+      filled: true,
+    );
+  }
   @override
   State<ActionButton> createState() => _ActionButtonState();
 }

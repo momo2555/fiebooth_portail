@@ -62,8 +62,8 @@ class SimpleText extends StatefulWidget {
     return SimpleText(
       text: text,
       color: 4,
-      size: 16,
-      thick: 5,
+      size: 18,
+      thick: 7,
       font: "Reem Kufi Fun",
     );
   }

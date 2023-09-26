@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 const PrimaryColor = Color(0xFF778792);
 const PrimaryColorLight = Color.fromARGB(255, 255, 255, 255);
@@ -13,7 +14,7 @@ const highlightColor = Color(0xFFFC7759);
 
 const darkText = Color(0xFF3B3B3B);
 const lightText = Color(0xFFFFF4E5);
-const onSurface = Color(0xFFCFCFCF);
+const onSurface = Color.fromARGB(255, 225, 225, 225);
 const surface =  Color(0xFFA5ACB1);
 
 const Background = Color(0xFF8D959A);
@@ -22,6 +23,7 @@ class MainTheme {
   static final ThemeData defaultTheme = _buildMyTheme();
 
   static ThemeData _buildMyTheme() {
+    
     final ThemeData base = ThemeData(fontFamily: 'Poppins');
 
     return base.copyWith(
@@ -62,6 +64,18 @@ class MainTheme {
       bottomAppBarTheme: base.bottomAppBarTheme.copyWith(
         elevation: 0,
       ),
+      sliderTheme: base.sliderTheme.copyWith(
+        activeTrackColor: SecondaryColor,
+        thumbColor: PrimaryColorLight,
+        inactiveTrackColor: lightText,
+      ),
+      switchTheme: base.switchTheme.copyWith(
+        thumbColor: const MaterialStatePropertyAll(PrimaryColorLight),
+        trackColor: const MaterialStatePropertyAll(SecondaryColor),
+        
+
+      ),
+      dialogBackgroundColor: Background,
       textTheme: base.textTheme.copyWith(
         bodyLarge: TextStyle(),
         bodyMedium: TextStyle(),

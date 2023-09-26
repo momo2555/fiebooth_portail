@@ -1,4 +1,5 @@
 import 'package:fiebooth_portail/components/simple_text.dart';
+import 'package:fiebooth_portail/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -32,8 +33,16 @@ class _PhotoViewState extends State<PhotoView> {
             icon: const Icon(Icons.print_rounded),
             color: Theme.of(context).colorScheme.onSurface,
           ),
-           IconButton(
-            onPressed: () {},
+          IconButton(
+            onPressed: () {
+              showSimpleDialog(
+                ButtonInfo(title: "Annuler", action: () {}),
+                ButtonInfo(title: "Supprimer", action: () {}),
+                SimpleText.label(
+                    "Voulez-vous vraiment supprimer cette photo ?"),
+                SimpleText.titleText("Suppression"),
+              );
+            },
             icon: const Icon(Icons.hide_image_outlined),
             color: Theme.of(context).colorScheme.onSurface,
           ),
