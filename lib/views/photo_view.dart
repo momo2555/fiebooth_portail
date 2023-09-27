@@ -1,4 +1,5 @@
 import 'package:fiebooth_portail/components/simple_text.dart';
+import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:fiebooth_portail/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -12,6 +13,7 @@ class PhotoView extends StatefulWidget {
 }
 
 class _PhotoViewState extends State<PhotoView> {
+  FieboothController _fieboothController = FieboothController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +65,10 @@ class _PhotoViewState extends State<PhotoView> {
             child: Hero(
               tag: widget.photo,
               child: Image(
-                image: AssetImage(widget.photo),
+                image: NetworkImage(
+                  _fieboothController.getPhotoUri(widget.photo).toString(),
+                  headers: _fieboothController.getBearerHeader(),
+                ),
               ),
             ),
           ),

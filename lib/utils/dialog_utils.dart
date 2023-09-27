@@ -9,7 +9,7 @@ class ButtonInfo {
   ButtonInfo({required this.title, required this.action});
 }
 
-showSimpleDialog(
+void showSimpleDialog(
     ButtonInfo leftButton, ButtonInfo rightButton, Widget content,
     [Widget title = const Placeholder()]) {
   showDialog(
