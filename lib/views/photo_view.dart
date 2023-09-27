@@ -31,15 +31,24 @@ class _PhotoViewState extends State<PhotoView> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              _fieboothController.printImage(widget.photo);
+            },
             icon: const Icon(Icons.print_rounded),
             color: Theme.of(context).colorScheme.onSurface,
           ),
           IconButton(
             onPressed: () {
               showSimpleDialog(
-                ButtonInfo(title: "Annuler", action: () {}),
-                ButtonInfo(title: "Supprimer", action: () {}),
+                ButtonInfo(title: "Annuler", action: () {
+                  Navigator.pop(context);
+                 }),
+                ButtonInfo(title: "Supprimer", action: () async {
+                  await _fieboothController.deleteImage(widget.photo);
+                  await _fieboothController.updateImageList();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                }),
                 SimpleText.label(
                     "Voulez-vous vraiment supprimer cette photo ?"),
                 SimpleText.titleText("Suppression"),
@@ -64,11 +73,19 @@ class _PhotoViewState extends State<PhotoView> {
             ),
             child: Hero(
               tag: widget.photo,
-              child: Image(
-                image: NetworkImage(
-                  _fieboothController.getPhotoUri(widget.photo).toString(),
-                  headers: _fieboothController.getBearerHeader(),
-                ),
+              child: Image.network(
+                _fieboothController.getPhotoUri(widget.photo).toString(),
+                headers: _fieboothController.getBearerHeader(),
+                loadingBuilder:
+                    (context, Widget child, ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress != null) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    return child;
+                  }
+                },
               ),
             ),
           ),
@@ -79,7 +96,7 @@ class _PhotoViewState extends State<PhotoView> {
         height: 90,
         width: double.infinity,
         child: Center(
-          child: SimpleText.label("Capture_12_12_23_gustave.jpg"),
+          child: SimpleText.label(widget.photo.split("@")[1]),
         ),
       ),
     );

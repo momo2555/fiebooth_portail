@@ -1,4 +1,5 @@
 import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
+import 'package:fiebooth_portail/utils/global_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -11,30 +12,36 @@ class PhotosPage extends StatefulWidget {
 }
 
 class _PhotosPageState extends State<PhotosPage> {
+
+
   FieboothController _fieboothController = FieboothController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fieboothController.updateImageList();
+  }
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _fieboothController.getAllPhotoIdsList(),
-      builder: (context, snapshot) {
-        print("coucou 1 : ${snapshot.hasData}");
-        if (snapshot.data != null) {
-          print("coucou 2");
-          List<Widget> photosTiles = snapshot.data!.map((photo_id) {
-            print(
-                _fieboothController.getPhotoThumbnailUri(photo_id).toString());
+    return ValueListenableBuilder(
+      valueListenable: Globals.photosList,
+      
+      builder: (context, value, child)  {
+        
+          List<Widget> photosTiles = value.map((photoId) {
             return InkWell(
               onTap: () {
-                Navigator.pushNamed(context, "/photo", arguments: photo_id);
+                Navigator.pushNamed(context, "/photo", arguments: photoId);
               },
               child: Hero(
-                tag: photo_id,
+                tag: photoId,
                 child: Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
                         _fieboothController
-                            .getPhotoThumbnailUri(photo_id)
+                            .getPhotoThumbnailUri(photoId)
                             .toString(),
                         headers: _fieboothController.getBearerHeader(),
                       ),
@@ -55,9 +62,7 @@ class _PhotosPageState extends State<PhotosPage> {
               children: photosTiles,
             ),
           );
-        } else {
-          return Container();
-        }
+        
       },
     );
   }

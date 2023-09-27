@@ -1,6 +1,7 @@
 import 'package:fiebooth_portail/components/action_button.dart';
 import 'package:fiebooth_portail/components/simple_close_button.dart';
 import 'package:fiebooth_portail/components/simple_text.dart';
+import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -13,9 +14,10 @@ class PhotosMenu extends StatefulWidget {
 }
 
 class _PhotosMenuState extends State<PhotosMenu> {
+  FieboothController _fieboothController = FieboothController();
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       color: Theme.of(context).colorScheme.background,
       child: Column(
         children: [
@@ -31,15 +33,21 @@ class _PhotosMenuState extends State<PhotosMenu> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 CircleAvatar(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   child: SimpleText.bigText("AD", 1),
                   radius: 50,
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 SimpleText.titleText("Admin"),
-                SizedBox(height: 15,),
+                SizedBox(
+                  height: 15,
+                ),
               ],
             ),
           ),
@@ -47,30 +55,39 @@ class _PhotosMenuState extends State<PhotosMenu> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                ActionButton.sideMenu("Toutes les photos", () {
-          
-                }),
-                SizedBox(height: 20,),
+                ActionButton.sideMenu("Toutes les photos", () {}),
+                SizedBox(
+                  height: 20,
+                ),
                 SimpleText.labelTitle("Photos par utilisateurs"),
-                SizedBox(height: 10,),
-                ActionButton.sideMenu("jean-luc", () {
-          
-                }),
-                SizedBox(height: 10,),
-                ActionButton.sideMenu("richard.fontaine", () {
-          
-                }),
-                SizedBox(height: 10,),
-                ActionButton.sideMenu("jean_philippe", () {
-          
-                }),
+                SizedBox(
+                  height: 10,
+                ),
+                FutureBuilder(
+                  future: _fieboothController.getUserList(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(children: [
+                        ...snapshot.data!.map(
+                          (userName) {
+                            return ActionButton.sideMenu(userName, () {
+                              //
+                            });
+                          },
+                        ).toList(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ]);
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
               ],
             ),
           ),
-
         ],
-    
-    
       ),
     );
   }

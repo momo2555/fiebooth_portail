@@ -97,6 +97,10 @@ class MainTheme {
         titleMedium: TextStyle(),
         titleSmall: TextStyle(),
         
+      ),
+      progressIndicatorTheme: base.progressIndicatorTheme.copyWith(
+        color: onSurface,
+        
       )
       /*textTheme: base.textTheme.copyWith(
           titleLarge: base.textTheme.titleLarge?.copyWith(color: TextColor),
