@@ -173,21 +173,29 @@ class FieboothController {
       getSetting("wifi_ssid").then((value) => config.wifiSsid = value),
       getSetting("wifi_password").then((value) => config.wifiPassword = value),
       getSetting("brightness").then((value) => config.brightness = value),
-      getSetting("contrast_default").then((value) => config.defaultContrast = value),
-      getSetting("brightness_default").then((value) => config.defaultBrightness = value),
+      getSetting("contrast_default")
+          .then((value) => config.defaultContrast = value),
+      getSetting("brightness_default")
+          .then((value) => config.defaultBrightness = value),
       getSetting("use_keyboard").then((value) => config.useKeyboard = value),
       getSetting("contrast").then((value) => config.contrast = value),
     ]);
     return config;
   }
+
   Future setSetting(String setting, oldValue, newValue) async {
-    if(oldValue!=newValue && isUserAdmin()) {
+    if (oldValue != newValue && isUserAdmin()) {
       Uri reqUri = _getUri("/setting/edit");
       Map<String, String> headers = getBearerHeader();
-      http.Response response = await http.post(reqUri, headers: headers, body: {
-        "key" : setting,
-        "value" : newValue,
-      });
+      headers["Content-Type"] = "application/json; charset=UTF-8";
+      http.Response response = await http.post(
+        reqUri,
+        headers: headers,
+        body: jsonEncode({
+          "key": setting,
+          "value": newValue,
+        }),
+      );
       if (response.statusCode == 200) {
         Map<String, dynamic> responseContent = jsonDecode(response.body);
         return responseContent["value"];
@@ -196,15 +204,21 @@ class FieboothController {
       }
     }
   }
-  Future<void> setSettings(ConfigModel oldSettings, ConfigModel newSettings) async {
+
+  Future<void> setSettings(
+      ConfigModel oldSettings, ConfigModel newSettings) async {
     await Future.wait([
       setSetting("user_text", oldSettings.userText, newSettings.userText),
       setSetting("wifi_ssid", oldSettings.wifiSsid, newSettings.wifiSsid),
-      setSetting("wifi_password", oldSettings.wifiPassword, newSettings.wifiPassword),
+      setSetting(
+          "wifi_password", oldSettings.wifiPassword, newSettings.wifiPassword),
       setSetting("brightness", oldSettings.brightness, newSettings.brightness),
-      setSetting("contrast_default", oldSettings.defaultContrast, newSettings.defaultContrast),
-      setSetting("brightness_default", oldSettings.defaultBrightness, newSettings.defaultBrightness),
-      setSetting("use_keyboard", oldSettings.useKeyboard, newSettings.useKeyboard),
+      setSetting("contrast_default", oldSettings.defaultContrast,
+          newSettings.defaultContrast),
+      setSetting("brightness_default", oldSettings.defaultBrightness,
+          newSettings.defaultBrightness),
+      setSetting(
+          "use_keyboard", oldSettings.useKeyboard, newSettings.useKeyboard),
       setSetting("contrast", oldSettings.contrast, newSettings.contrast),
     ]);
   }
