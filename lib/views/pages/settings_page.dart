@@ -1,6 +1,9 @@
 import 'package:fiebooth_portail/components/action_button.dart';
 import 'package:fiebooth_portail/components/simple_input.dart';
 import 'package:fiebooth_portail/components/simple_text.dart';
+import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
+import 'package:fiebooth_portail/models/config_model.dart';
+import 'package:fiebooth_portail/utils/global_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -13,6 +16,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  FieboothController _fieboothController = FieboothController();
+  ConfigModel _config = Globals.config;
+  bool _disposed = false;
   Widget _configTitle(String title) {
     return Row(
       children: [SimpleText.labelTitle(title)],
@@ -28,6 +34,27 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _disposed = false;
+    _fieboothController.getSettings().then((allSettings) {
+      if (!_disposed) {
+        setState(() {
+          _config = allSettings;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _disposed = true;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -39,6 +66,10 @@ class _SettingsPageState extends State<SettingsPage> {
               SimpleInput(
                 style: "filled",
                 placeholder: "Texte personnalisé",
+                value: _config.userText ?? "",
+                onChange: (value) {
+                  _config.userText = value;
+                },
               )
             ]),
             SizedBox(
@@ -56,6 +87,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: SimpleInput(
                       style: "filled",
                       placeholder: "SSID",
+                      value: _config.wifiSsid ?? "",
+                      onChange: (value) {
+                        _config.wifiSsid = value;
+                      },
                     ),
                   ),
                 ],
@@ -72,7 +107,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   Flexible(
                     child: SimpleInput(
                       style: "filled",
+                      type: "password",
                       placeholder: "MDP",
+                      value: _config.wifiPassword ?? "",
+                      onChange: (value) {
+                        _config.wifiPassword = value;
+                      },
                     ),
                   ),
                 ],
@@ -85,27 +125,39 @@ class _SettingsPageState extends State<SettingsPage> {
               _configTitle("Paramètres image"),
               SimpleText.label("contraste imprimante :"),
               Slider(
-                value: 0.5,
-                onChanged: (val) {},
-                
+                value: ((_config.defaultContrast ?? 0) + 6) / 12,
+                onChanged: (val) {
+                  setState(() {
+                    _config.defaultContrast = (val * 12 - 6).round();
+                  });
+                },
               ),
               SimpleText.label("luminosité imprimante :"),
               Slider(
-                value: 0.5,
-                onChanged: (val) {},
-                
+                value: ((_config.defaultBrightness ?? 0) + 6) / 12,
+                onChanged: (val) {
+                  setState(() {
+                    _config.defaultBrightness = (val * 12 - 6).round();
+                  });
+                },
               ),
               SimpleText.label("contraste :"),
               Slider(
-                value: 0.5,
-                onChanged: (val) {},
-                
+                value: ((_config.contrast ?? 0) + 6) / 12,
+                onChanged: (val) {
+                  setState(() {
+                    _config.contrast = (val * 12 - 6).round();
+                  });
+                },
               ),
               SimpleText.label("luminosité :"),
               Slider(
-                value: 0.5,
-                onChanged: (val) {},
-                
+                value: ((_config.brightness ?? 0) + 6) / 12,
+                onChanged: (val) {
+                  setState(() {
+                    _config.brightness = (val * 12 - 6).round();
+                  });
+                },
               ),
             ]),
             SizedBox(
@@ -119,11 +171,18 @@ class _SettingsPageState extends State<SettingsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: SimpleText.label("Utiliser le clavier"),
                   ),
-                  Switch(value: true, onChanged: (val) {},),
+                  Switch(
+                    value: _config.useKeyboard ?? true,
+                    onChanged: (val) {
+                      setState(() {
+                        _config.useKeyboard = false;
+                      });
+                    },
+                  ),
                 ],
               )
             ]),
-             SizedBox(
+            SizedBox(
               height: 15,
             ),
             ActionButton.action("Sauvegarder", () => null)

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:fiebooth_portail/models/config_model.dart';
 import 'package:fiebooth_portail/models/user_model.dart';
 import 'package:fiebooth_portail/utils/error_utils.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
@@ -55,16 +56,12 @@ class FieboothController {
   }
 
   void userLogout() {}
-  void getConfig() {}
-  void setConfig() {}
   Future<List<String>?> getAllPhotoIdsList() async {
     Uri reqUri = _getUri("/images/all");
     Map<String, String> headers = getBearerHeader();
     http.Response response = await http.get(reqUri, headers: headers);
     if (response.statusCode == 200) {
       Map<String, dynamic> responseContent = jsonDecode(response.body);
-      print(
-          "STATUS CODE = ${response.statusCode} photos = ${responseContent["photos"]}");
       return List.from(responseContent["photos"]);
     } else {
       throw Exception("Request Error : Not Authorized !");
@@ -91,12 +88,14 @@ class FieboothController {
       throw Exception("Unauthorized : No user logged");
     }
   }
+
   Future updateImageList() async {
-    if(Globals.selectedUser == "all" && isUserAdmin()) {
+    if (Globals.selectedUser == "all" && isUserAdmin()) {
       Globals.photosList.value = await getAllPhotoIdsList() ?? [];
-    }else {
+    } else {
       if (isTheUserConnected(Globals.selectedUser) || isUserAdmin()) {
-        Globals.photosList.value = await getPhotosIdByUser(Globals.selectedUser) ?? [];
+        Globals.photosList.value =
+            await getPhotosIdByUser(Globals.selectedUser) ?? [];
       }
     }
   }
@@ -138,17 +137,75 @@ class FieboothController {
     }
   }
 
-  Future<List<String>?> getUserList () async {
-    if(isUserAdmin()) {
+  Future<List<String>?> getUserList() async {
+    if (isUserAdmin()) {
       Uri reqUri = _getUri("/users/all");
       Map<String, String> headers = getBearerHeader();
       http.Response response = await http.get(reqUri, headers: headers);
       if (response.statusCode == 200) {
-          Map<String, dynamic> responseContent = jsonDecode(response.body);
-          return List.from(responseContent["users"]);
-        } else {
-          throw Exception("Request Error : Not Authorized !");
-        }
+        Map<String, dynamic> responseContent = jsonDecode(response.body);
+        return List.from(responseContent["users"]);
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
     }
-  } 
+    return null;
+  }
+
+  Future<dynamic> getSetting(String settingName) async {
+    if (isUserAdmin()) {
+      Uri reqUri = _getUri("/setting/$settingName");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.get(reqUri, headers: headers);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseContent = jsonDecode(response.body);
+        return responseContent["value"];
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
+  }
+
+  Future<ConfigModel> getSettings() async {
+    ConfigModel config = ConfigModel.empty();
+    await Future.wait([
+      getSetting("user_text").then((value) => config.userText = value),
+      getSetting("wifi_ssid").then((value) => config.wifiSsid = value),
+      getSetting("wifi_password").then((value) => config.wifiPassword = value),
+      getSetting("brightness").then((value) => config.brightness = value),
+      getSetting("contrast_default").then((value) => config.defaultContrast = value),
+      getSetting("brightness_default").then((value) => config.defaultBrightness = value),
+      getSetting("use_keyboard").then((value) => config.useKeyboard = value),
+      getSetting("contrast").then((value) => config.contrast = value),
+    ]);
+    return config;
+  }
+  Future setSetting(String setting, oldValue, newValue) async {
+    if(oldValue!=newValue && isUserAdmin()) {
+      Uri reqUri = _getUri("/setting/edit");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.post(reqUri, headers: headers, body: {
+        "key" : setting,
+        "value" : newValue,
+      });
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseContent = jsonDecode(response.body);
+        return responseContent["value"];
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
+  }
+  Future<void> setSettings(ConfigModel oldSettings, ConfigModel newSettings) async {
+    await Future.wait([
+      setSetting("user_text", oldSettings.userText, newSettings.userText),
+      setSetting("wifi_ssid", oldSettings.wifiSsid, newSettings.wifiSsid),
+      setSetting("wifi_password", oldSettings.wifiPassword, newSettings.wifiPassword),
+      setSetting("brightness", oldSettings.brightness, newSettings.brightness),
+      setSetting("contrast_default", oldSettings.defaultContrast, newSettings.defaultContrast),
+      setSetting("brightness_default", oldSettings.defaultBrightness, newSettings.defaultBrightness),
+      setSetting("use_keyboard", oldSettings.useKeyboard, newSettings.useKeyboard),
+      setSetting("contrast", oldSettings.contrast, newSettings.contrast),
+    ]);
+  }
 }

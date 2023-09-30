@@ -1,3 +1,4 @@
+import 'package:fiebooth_portail/models/config_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fiebooth_portail/models/user_model.dart';
 
@@ -10,7 +11,7 @@ class Globals {
 
   static String selectedUser = "all";
   static var photosList = ValueNotifier<List<String>>([]);
-
+  static var config = ConfigModel.empty();
   static void goBack(context) {
     Globals.goToKart.value = false;
     try {

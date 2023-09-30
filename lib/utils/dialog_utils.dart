@@ -10,7 +10,7 @@ class ButtonInfo {
 }
 
 void showSimpleDialog(
-    ButtonInfo leftButton, ButtonInfo rightButton, Widget content,
+    ButtonInfo? leftButton, ButtonInfo? rightButton, Widget content,
     [Widget title = const Placeholder()]) {
   showDialog(
     context: globalNavigatorKey.currentContext!,
@@ -29,8 +29,8 @@ void showSimpleDialog(
           child: content,
         ),
         actions: [
-          ActionButton.squaredDark(leftButton.title, leftButton.action),
-          ActionButton.squaredLight(rightButton.title, rightButton.action),
+          leftButton != null ? ActionButton.squaredDark(leftButton.title, leftButton.action) : Container(),
+          rightButton != null ? ActionButton.squaredLight(rightButton.title, rightButton.action) : Container(),
         ],
       );
     },

@@ -134,7 +134,7 @@ class _SimpleInputState extends State<SimpleInput> {
       prefixStyle: TextStyle(
           color: Colors.green, fontWeight: FontWeight.bold, fontSize: 17),
       hintStyle: TextStyle(
-          color: Theme.of(context).primaryColorLight,
+          color: Theme.of(context).colorScheme.surface,
           fontStyle: FontStyle.italic,
           fontWeight: FontWeight.w100),
       enabledBorder: OutlineInputBorder(

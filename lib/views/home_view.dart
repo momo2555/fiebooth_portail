@@ -1,3 +1,4 @@
+import 'package:fiebooth_portail/components/photos_length_indicator.dart';
 import 'package:fiebooth_portail/components/photos_menu.dart';
 import 'package:fiebooth_portail/components/simple_text.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 class PageInfo {
   final Widget page;
   final Widget leftIcon;
+  final Widget? rightIcon;
   final Widget title;
   final Widget menu;
   final Color topBgColor;
@@ -20,7 +22,8 @@ class PageInfo {
       required this.title,
       required this.menu,
       required this.floatingButton,
-      required this.topBgColor});
+      required this.topBgColor,
+      this.rightIcon});
 }
 
 class HomeView extends StatefulWidget {
@@ -55,6 +58,7 @@ class _HomeViewState extends State<HomeView> {
           menu: Container(),
           floatingButton:
               Container(),
+          rightIcon: PhotosLengthIndicator(),
         ),
         PageInfo(
           title: SimpleText.BigTitle("Config"),
@@ -99,8 +103,9 @@ class _HomeViewState extends State<HomeView> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 0),
                   child: page.leftIcon,
-                )
-              ,
+                ),
+              actions: [page.rightIcon??Container()],
+
             ),
             bottomNavigationBar: BottomNavigationBar(
               backgroundColor: Theme.of(context).colorScheme.secondary,

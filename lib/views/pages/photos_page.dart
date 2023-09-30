@@ -1,3 +1,4 @@
+import 'package:fiebooth_portail/components/simple_text.dart';
 import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,6 @@ class PhotosPage extends StatefulWidget {
 }
 
 class _PhotosPageState extends State<PhotosPage> {
-
-
   FieboothController _fieboothController = FieboothController();
 
   @override
@@ -22,14 +21,20 @@ class _PhotosPageState extends State<PhotosPage> {
     super.initState();
     _fieboothController.updateImageList();
   }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: Globals.photosList,
-      
-      builder: (context, value, child)  {
-        
-          List<Widget> photosTiles = value.map((photoId) {
+      builder: (context, value, child) {
+        List<Widget> photosTiles = [
+          Container(
+            color: Theme.of(context).primaryColor,
+            child: Center(
+              child: SimpleText.label(Globals.selectedUser),
+            ),
+          ),
+          ...value.map((photoId) {
             return InkWell(
               onTap: () {
                 Navigator.pushNamed(context, "/photo", arguments: photoId);
@@ -51,18 +56,18 @@ class _PhotosPageState extends State<PhotosPage> {
                 ),
               ),
             );
-          }).toList();
-          return Container(
-            child: GridView.count(
-              padding: EdgeInsets.all(15),
-              crossAxisCount: 3,
-              childAspectRatio: 1,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              children: photosTiles,
-            ),
-          );
-        
+          }).toList()
+        ];
+        return Container(
+          child: GridView.count(
+            padding: EdgeInsets.all(15),
+            crossAxisCount: 3,
+            childAspectRatio: 1,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            children: photosTiles,
+          ),
+        );
       },
     );
   }

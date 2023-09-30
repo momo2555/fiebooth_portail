@@ -2,6 +2,7 @@ import 'package:fiebooth_portail/components/action_button.dart';
 import 'package:fiebooth_portail/components/simple_close_button.dart';
 import 'package:fiebooth_portail/components/simple_text.dart';
 import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
+import 'package:fiebooth_portail/utils/global_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -26,9 +27,9 @@ class _PhotosMenuState extends State<PhotosMenu> {
             child: Column(
               children: [
                 Row(
-                  children: [
+                  children: const [
                     Padding(
-                      padding: const EdgeInsets.only(top: 15, left: 15),
+                      padding: EdgeInsets.only(top: 15, left: 15),
                       child: SimpleCloseButton(),
                     ),
                   ],
@@ -55,7 +56,9 @@ class _PhotosMenuState extends State<PhotosMenu> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                ActionButton.sideMenu("Toutes les photos", () {}),
+                ActionButton.sideMenu("Toutes les photos", () {
+                  _selectUser("all");
+                }),
                 SizedBox(
                   height: 20,
                 ),
@@ -67,20 +70,22 @@ class _PhotosMenuState extends State<PhotosMenu> {
                   future: _fieboothController.getUserList(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Column(children: [
-                        ...snapshot.data!.map(
+                      return Column(children: snapshot.data!.map(
                           (userName) {
-                            return ActionButton.sideMenu(userName, () {
-                              //
-                            });
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: ActionButton.sideMenu(userName, () {
+                                _selectUser(userName);
+                              }),
+                            );
                           },
-                        ).toList(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                      ]);
+                        ).toList()
+                      );
                     } else {
-                      return Container();
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: CircularProgressIndicator(),
+                      );
                     }
                   },
                 ),
@@ -90,5 +95,11 @@ class _PhotosMenuState extends State<PhotosMenu> {
         ],
       ),
     );
+  }
+
+  void _selectUser(String user) {
+    Globals.selectedUser = user;
+    _fieboothController.updateImageList();
+    Navigator.pop(context);
   }
 }
