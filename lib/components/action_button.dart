@@ -69,7 +69,7 @@ class ActionButton extends StatefulWidget {
       expanded: true,
     );
   }
-  factory ActionButton.squaredLight(String text, Function() action) {
+  factory ActionButton.squaredLight(String text, Function() action, [expanded = true]) {
     var context = globalNavigatorKey.currentContext!;
     return ActionButton(
       text: text,
@@ -78,6 +78,7 @@ class ActionButton extends StatefulWidget {
       color: Theme.of(context).colorScheme.onSecondary,
       rounded: false,
       filled: true,
+      expanded: expanded,
     );
   }
   factory ActionButton.squaredDark(String text, Function() action) {

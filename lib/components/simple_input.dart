@@ -14,7 +14,7 @@ class SimpleInput extends StatefulWidget {
     this.previousNode,
     this.onChange,
     this.validator,
-    this.value = "",
+    this.value,
     this.minLines,
     this.maxLines,
     this.inputFormatters,
@@ -32,7 +32,7 @@ class SimpleInput extends StatefulWidget {
   final FocusNode? previousNode;
   final Function(dynamic value)? validator;
   final Function(String value)? onChange;
-  final String value;
+  final String? value;
   final int? minLines;
   final int? maxLines;
   final TextEditingController? controller;
@@ -347,7 +347,7 @@ class _SimpleInputState extends State<SimpleInput> {
       digits: 3,
       step: 0.01,
       spacing: 40,
-      value: double.parse(widget.value),
+      value: double.parse(widget.value??"0.0"),
       onChanged: (val) {
         value = val.toString();
         widget.onChange != null ? widget.onChange!(val.toString()) : () {};
@@ -378,6 +378,7 @@ class _SimpleInputState extends State<SimpleInput> {
 
   @override
   Widget build(BuildContext context) {
+    print("build ${widget.placeholder} = ${widget.value}");
     if (widget.type == 'multiline') {
       return _multilineInput();
     } else if (widget.type == 'numeric') {

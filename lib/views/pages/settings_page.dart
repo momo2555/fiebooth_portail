@@ -21,6 +21,9 @@ class _SettingsPageState extends State<SettingsPage> {
   ConfigModel _config = Globals.config;
   bool _wait = false;
   bool _disposed = false;
+  TextEditingController _wifiPasswordController = TextEditingController();
+  TextEditingController _wifiSsidController = TextEditingController();
+  TextEditingController _userTextController = TextEditingController();
   Widget _configTitle(String title) {
     return Row(
       children: [SimpleText.labelTitle(title)],
@@ -34,17 +37,25 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Column(children: children),
     );
   }
+  void _updateTextInputs() {
+    _wifiPasswordController.text = _config.wifiPassword??"";
+    _wifiSsidController.text = _config.wifiSsid??"";
+    _userTextController.text = _config.userText??"";
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _updateTextInputs();
     _disposed = false;
     _wait = true;
     _fieboothController.getSettings().then((allSettings) {
       if (!_disposed) {
         setState(() {
           _config = ConfigModel.copy(allSettings);
+          _updateTextInputs();
+          print("config : ${_config.wifiPassword}");
           Globals.config = ConfigModel.copy(allSettings);
           _wait = false;
         });
@@ -73,11 +84,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   SimpleInput(
                     style: "filled",
                     placeholder: "Texte personnalisé",
-                    value: _config.userText ?? "",
+                    //value: _config.userText ?? "",
+                    controller: _userTextController,
                     onChange: (value) {
-                      setState(() {
+                      
                         _config.userText = value;
-                      });
+                      
                     },
                   )
                 ]),
@@ -96,11 +108,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: SimpleInput(
                           style: "filled",
                           placeholder: "SSID",
-                          value: _config.wifiSsid ?? "",
+                          //value: _config.wifiSsid ?? "",
+                          controller: _wifiSsidController,
                           onChange: (value) {
-                            setState(() {
+                           
                               _config.wifiSsid = value;
-                            });
+                            
                           },
                         ),
                       ),
@@ -120,11 +133,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: "filled",
                           type: "password",
                           placeholder: "MDP",
-                          value: _config.wifiPassword ?? "",
+                          controller: _wifiPasswordController,
+                          //value: _config.wifiPassword ?? "",
                           onChange: (value) {
-                            setState(() {
+                            
                               _config.wifiPassword = value;
-                            });
+                            
                           },
                         ),
                       ),
