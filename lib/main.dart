@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:js';
+import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:fiebooth_portail/theme/main_theme.dart';
 import 'package:fiebooth_portail/views/photo_view.dart';
 import 'package:fiebooth_portail/views/signin_view.dart';
@@ -38,13 +39,29 @@ class MyApp extends StatelessWidget {
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     //UserConnection _userConnection = UserConnection();
+    FieboothController _fieboothController = FieboothController();
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (context) => const SigninView());
+        return MaterialPageRoute(builder: (context) {
+          return StreamBuilder(
+            stream: _fieboothController.getUserConnected(),
+            builder: (context, snapshot) {
+              if(snapshot.data != null) {
+                return const HomeView();
+              }else{
+                return const SigninView();
+              }
+              
+            },
+          );
+        });
       case '/home':
         return MaterialPageRoute(builder: (context) => const HomeView());
       case '/photo':
-        return MaterialPageRoute(builder: (context) => PhotoView(photo: settings.arguments as String,));
+        return MaterialPageRoute(
+            builder: (context) => PhotoView(
+                  photo: settings.arguments as String,
+                ));
       /*return MaterialPageRoute(
             builder: (context) => StreamBuilder(
                   stream: _userConnection.userStream,

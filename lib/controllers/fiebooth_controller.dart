@@ -36,12 +36,35 @@ class FieboothController {
       if (user.userName == "admin") {
         user.userIsAdmin = true;
       }
+      // create the cookie
+      Cookie("fiebooth-usr", responseContent["access_token"]);
       print(
           "STATUS CODE = ${response.statusCode} userToken = ${user.userToken}");
       FieboothController.loggedUser = user;
       return user;
     } else {
       throw LoginException();
+    }
+  }
+
+  void userLogout() {
+    FieboothController.loggedUser = null;
+  }
+
+  Stream<UserModel?> getUserConnected() async* {
+    UserModel? streamUserState;
+    while (true) {
+      if (streamUserState != FieboothController.loggedUser) {
+        if (FieboothController.loggedUser != null &&
+            FieboothController.loggedUser!.userToken != null) {
+          streamUserState = UserModel.copy(FieboothController.loggedUser!);
+          yield FieboothController.loggedUser;
+        } else {
+          yield null;
+        }
+      }
+
+      await Future.delayed(const Duration(seconds: 1));
     }
   }
 
@@ -55,7 +78,6 @@ class FieboothController {
     }
   }
 
-  void userLogout() {}
   Future<List<String>?> getAllPhotoIdsList() async {
     Uri reqUri = _getUri("/images/all");
     Map<String, String> headers = getBearerHeader();
