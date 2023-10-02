@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -37,7 +38,7 @@ class FieboothController {
         user.userIsAdmin = true;
       }
       // create the cookie
-      Cookie("fiebooth-usr", responseContent["access_token"]);
+      //document.cookie =  Cookie("fiebooth-usr", responseContent["access_token"]);
       print(
           "STATUS CODE = ${response.statusCode} userToken = ${user.userToken}");
       FieboothController.loggedUser = user;
@@ -62,6 +63,8 @@ class FieboothController {
         } else {
           yield null;
         }
+      } else {
+
       }
 
       await Future.delayed(const Duration(seconds: 1));
