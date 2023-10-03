@@ -378,7 +378,6 @@ class _SimpleInputState extends State<SimpleInput> {
 
   @override
   Widget build(BuildContext context) {
-    print("build ${widget.placeholder} = ${widget.value}");
     if (widget.type == 'multiline') {
       return _multilineInput();
     } else if (widget.type == 'numeric') {
