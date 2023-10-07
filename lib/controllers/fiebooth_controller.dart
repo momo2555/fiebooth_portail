@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 class FieboothController {
   final FieboothCookie _fieboothCookie = FieboothCookie();
   static UserModel? loggedUser;
-  final String _client = "192.168.137.60:5000";
+  final String _client = "raspberrypi:5000";
   /*FieboothController() {
     
   }*/
@@ -306,5 +306,22 @@ class FieboothController {
           "use_keyboard", oldSettings.useKeyboard, newSettings.useKeyboard),
       setSetting("contrast", oldSettings.contrast, newSettings.contrast),
     ]);
+  }
+  Future createNewUser(String userName, String password) async {
+    if (isUserAdmin()) {
+      Uri reqUri = _getUri("/users/new");
+      Map<String, String> headers = getBearerHeader();
+      headers["Content-Type"] = "application/json; charset=UTF-8";
+      http.Response response = await http.post(reqUri, headers: headers, body: jsonEncode({
+        "username" : userName,
+        "password" : password,
+        "hashpassword" : "",
+      }));
+      if (response.statusCode == 200) {
+        //
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
   }
 }

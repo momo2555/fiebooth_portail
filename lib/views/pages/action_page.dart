@@ -16,6 +16,8 @@ class ActionPage extends StatefulWidget {
 
 class _ActionPageState extends State<ActionPage> {
   FieboothController _fieboothController = FieboothController();
+  String _newUserPassword = "";
+  String _newUserName = "";
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -113,6 +115,7 @@ class _ActionPageState extends State<ActionPage> {
   }
 
   List<Widget> get _createUserBloc {
+    
     return [
       SimpleText.labelTitle("Utilisateurs"),
       SizedBox(
@@ -121,6 +124,9 @@ class _ActionPageState extends State<ActionPage> {
       SimpleInput(
         style: "filled",
         placeholder: "Nom d'utilisateur",
+        onChange: (value) {
+          _newUserName = value;
+        },
       ),
       SizedBox(
         height: 10,
@@ -129,11 +135,16 @@ class _ActionPageState extends State<ActionPage> {
         style: "filled",
         placeholder: "Mot de passe",
         type: "password",
+        onChange: (value) {
+          _newUserPassword = value;
+        },
       ),
       SizedBox(
         height: 10,
       ),
-      ActionButton.squaredLight("Nouvel utilisateur", () => null),
+      ActionButton.squaredLight("Nouvel utilisateur", () {
+        _fieboothController.createNewUser(_newUserName, _newUserPassword);
+      }),
       SizedBox(
         height: 15,
       )
