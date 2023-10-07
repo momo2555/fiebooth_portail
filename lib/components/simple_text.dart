@@ -67,6 +67,15 @@ class SimpleText extends StatefulWidget {
       font: "Reem Kufi Fun",
     );
   }
+  factory SimpleText.darklabel(String text) {
+    return SimpleText(
+      text: text,
+      color: 5,
+      size: 18,
+      thick: 7,
+      font: "Reem Kufi Fun",
+    );
+  }
   factory SimpleText.labelTitle(String text) {
     return SimpleText(
       text: text,

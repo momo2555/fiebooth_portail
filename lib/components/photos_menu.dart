@@ -20,79 +20,81 @@ class _PhotosMenuState extends State<PhotosMenu> {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.background,
-      child: Column(
-        children: [
-          Container(
-            color: Theme.of(context).primaryColor,
-            child: Column(
-              children: [
-                Row(
-                  children: const [
-                    Padding(
-                      padding: EdgeInsets.only(top: 15, left: 15),
-                      child: SimpleCloseButton(),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  child: SimpleText.bigText("AD", 1),
-                  radius: 50,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                SimpleText.titleText("Admin"),
-                SizedBox(
-                  height: 15,
-                ),
-              ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              color: Theme.of(context).primaryColor,
+              child: Column(
+                children: [
+                  Row(
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.only(top: 15, left: 15),
+                        child: SimpleCloseButton(),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    child: SimpleText.bigText("AD", 1),
+                    radius: 50,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SimpleText.titleText("Admin"),
+                  SizedBox(
+                    height: 15,
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                ActionButton.sideMenu("Toutes les photos", () {
-                  _selectUser("all");
-                }),
-                SizedBox(
-                  height: 20,
-                ),
-                SimpleText.labelTitle("Photos par utilisateurs"),
-                SizedBox(
-                  height: 10,
-                ),
-                FutureBuilder(
-                  future: _fieboothController.getUserList(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Column(children: snapshot.data!.map(
-                          (userName) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: ActionButton.sideMenu(userName, () {
-                                _selectUser(userName);
-                              }),
-                            );
-                          },
-                        ).toList()
-                      );
-                    } else {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  ActionButton.sideMenu("Toutes les photos", () {
+                    _selectUser("all");
+                  }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SimpleText.labelTitle("Photos par utilisateurs"),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  FutureBuilder(
+                    future: _fieboothController.getUserList(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Column(children: snapshot.data!.map(
+                            (userName) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: ActionButton.sideMenu(userName, () {
+                                  _selectUser(userName);
+                                }),
+                              );
+                            },
+                          ).toList()
+                        );
+                      } else {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

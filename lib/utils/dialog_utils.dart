@@ -1,4 +1,5 @@
 import 'package:fiebooth_portail/components/action_button.dart';
+import 'package:fiebooth_portail/components/simple_text.dart';
 import 'package:fiebooth_portail/main.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +42,27 @@ void showSimpleDialog(
   );
 }
 
+void shwoInfoDialog(String content, String title) {
+  var context = globalNavigatorKey.currentContext!;
+  showSimpleDialog(null, ButtonInfo(title: "Okay", action: () {
+                    Navigator.pop(context); 
+                  }), SimpleText.label(content),
+                  SimpleText.titleText(title));
+}
+
+void showConfirmDialog(String content, String title, Function() action) {
+  var context = globalNavigatorKey.currentContext!;
+  showSimpleDialog(
+                ButtonInfo(title: "Annuler", action: () {
+                  Navigator.pop(context);
+                 }),
+                ButtonInfo(title: "Confirmer", action: action),
+                SimpleText.label(
+                    content),
+                SimpleText.titleText(title),
+              );
+}
+
 Widget logOutCaption(context) {
   return Align(
     alignment: Alignment.center,
@@ -56,4 +78,5 @@ Widget logOutCaption(context) {
       ),
     ),
   );
+
 }

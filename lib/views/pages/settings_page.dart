@@ -217,10 +217,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   await _fieboothController.setSettings(Globals.config, _config);
                   Globals.config = ConfigModel.copy(_config);
                   _wait = false;
-                  showSimpleDialog(null, ButtonInfo(title: "Okay", action: () {
-                    Navigator.pop(context); 
-                  }), SimpleText.label("Enregistrement des nouveaux paramètres effectué avec succès"),
-                  SimpleText.titleText("Confirmation"));
+                  shwoInfoDialog("Enregistrement des nouveaux paramètres effectué avec succès", "Confirmation");
                   
                 }),
               ],
@@ -230,7 +227,7 @@ class _SettingsPageState extends State<SettingsPage> {
         _wait?
         Container(
           color: Theme.of(context).primaryColorDark.withAlpha(140),
-          child: Center(child: CircularProgressIndicator()),
+          child: const Center(child: CircularProgressIndicator()),
         ):const SizedBox(height: 0,width: 0,),
       ],
     );

@@ -324,4 +324,28 @@ class FieboothController {
       }
     }
   }
+  Future deleteUserPhoto(String userName) async {
+    if (isUserAdmin()) {
+      Uri reqUri = _getUri("/images/user/$userName");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.delete(reqUri, headers: headers);
+      if (response.statusCode == 200) {
+        //
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
+  }
+  Future deleteAllphotos() async {
+    if (isUserAdmin()) {
+      Uri reqUri = _getUri("/images/all");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.delete(reqUri, headers: headers);
+      if (response.statusCode == 200) {
+        //
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
+  }
 }

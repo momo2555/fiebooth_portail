@@ -39,20 +39,12 @@ class _PhotoViewState extends State<PhotoView> {
           ),
           IconButton(
             onPressed: () {
-              showSimpleDialog(
-                ButtonInfo(title: "Annuler", action: () {
-                  Navigator.pop(context);
-                 }),
-                ButtonInfo(title: "Supprimer", action: () async {
+              showConfirmDialog("Voulez-vous vraiment supprimer cette photo ?", "Suppression", () async {
                   await _fieboothController.deleteImage(widget.photo);
                   await _fieboothController.updateImageList();
                   Navigator.pop(context);
                   Navigator.pop(context);
-                }),
-                SimpleText.label(
-                    "Voulez-vous vraiment supprimer cette photo ?"),
-                SimpleText.titleText("Suppression"),
-              );
+                },);
             },
             icon: const Icon(Icons.hide_image_outlined),
             color: Theme.of(context).colorScheme.onSurface,
