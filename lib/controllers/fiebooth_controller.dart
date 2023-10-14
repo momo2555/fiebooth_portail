@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 class FieboothController {
   final FieboothCookie _fieboothCookie = FieboothCookie();
   static UserModel? loggedUser;
-  final String _client = "raspberrypi:5000";
+  final String _client = "portail.fiebooth:5000";
   /*FieboothController() {
     
   }*/
