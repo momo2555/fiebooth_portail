@@ -147,7 +147,7 @@ class _ActionButtonState extends State<ActionButton> {
               : null,
           side: widget.hasBorder ?? false
               ? MaterialStateProperty.all(BorderSide(
-                  color: widget.color ?? Theme.of(context).accentColor,
+                  color: widget.color ?? Theme.of(context).colorScheme.secondary,
                   width: 1))
               : null),
     );

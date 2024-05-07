@@ -90,6 +90,12 @@ class _ActionPageState extends State<ActionPage> {
       SizedBox(
         height: 10,
       ),
+      ActionButton.sideMenu("Imprimer les QRcodes", () {
+        _fieboothController.printQrcodes();
+      }),
+      SizedBox(
+        height: 10,
+      ),
       ActionButton.sideMenu("Redémerrer le Fiebooth", () => null),
       SizedBox(
         height: 10,

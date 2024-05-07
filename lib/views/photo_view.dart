@@ -32,6 +32,13 @@ class _PhotoViewState extends State<PhotoView> {
         actions: [
           IconButton(
             onPressed: () {
+              _fieboothController.downloadPhoto(widget.photo);
+            },
+            icon: const Icon(Icons.download),
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+          IconButton(
+            onPressed: () {
               _fieboothController.printImage(widget.photo);
             },
             icon: const Icon(Icons.print_rounded),
@@ -66,7 +73,7 @@ class _PhotoViewState extends State<PhotoView> {
             child: Hero(
               tag: widget.photo,
               child: Image.network(
-                _fieboothController.getPhotoUri(widget.photo).toString(),
+                _fieboothController.getPhotoThumbnailUri(widget.photo).toString(),
                 headers: _fieboothController.getBearerHeader(),
                 loadingBuilder:
                     (context, Widget child, ImageChunkEvent? loadingProgress) {

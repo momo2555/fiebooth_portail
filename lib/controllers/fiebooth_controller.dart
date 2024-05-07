@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:html';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:fiebooth_portail/controllers/fiebooth_cookie.dart';
@@ -8,6 +9,7 @@ import 'package:fiebooth_portail/models/config_model.dart';
 import 'package:fiebooth_portail/models/user_model.dart';
 import 'package:fiebooth_portail/utils/error_utils.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:http/http.dart' as http;
 
 class FieboothController {
@@ -249,6 +251,39 @@ class FieboothController {
         throw Exception("Request Error : Not Authorized !");
       }
     }
+  }
+
+  Future printQrcodes() async {
+    if (isUserAdmin()) {
+      Uri reqUri = _getUri("/printqr");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.post(reqUri, headers: headers);
+      if (response.statusCode == 200) {
+        // Map<String, dynamic> responseContent = jsonDecode(response.body);
+        // return responseContent["value"];
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
+  }
+
+  Future downloadPhoto(String photoId) async {
+    Uri photoUri = getPhotoUri(photoId);
+    Map<String, String> headers = getBearerHeader(photoUri.toString());
+    http.Response response = await http.get(photoUri, headers: headers);
+    if (response.statusCode == 200) {
+      // Get the file data as bytes
+        Uint8List fileData = response.bodyBytes;
+
+        // Save the file using file_saver
+        await FileSaver.instance.saveFile(name: photoId, bytes: fileData);
+    } else {
+      throw Exception("Request Error : Not Authorized !");
+    }
+   
+    
+
+
   }
 
   Future<ConfigModel> getSettings() async {
