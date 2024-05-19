@@ -1,11 +1,10 @@
 import 'dart:convert';
-import 'dart:html';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:fiebooth_portail/controllers/fiebooth_cookie.dart';
 import 'package:fiebooth_portail/models/config_model.dart';
+import 'package:fiebooth_portail/models/download_status.dart';
 import 'package:fiebooth_portail/models/user_model.dart';
 import 'package:fiebooth_portail/utils/error_utils.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
@@ -16,9 +15,10 @@ class FieboothController {
   final FieboothCookie _fieboothCookie = FieboothCookie();
   static UserModel? loggedUser;
   final String _client = "portail.fiebooth:5000";
-  /*FieboothController() {
-    
-  }*/
+  FieboothController() {
+    print("base URI = ${Uri.base}");
+  }
+
   Uri _getUri(String route) {
     return Uri.http(_client, route);
   }
@@ -57,7 +57,6 @@ class FieboothController {
 
   Stream<UserModel?> getUserConnected() async* {
     UserModel? streamUserState;
-    int counter = 0;
     await _handleCookieAutoLogin();
     while (true) {
       if (streamUserState != FieboothController.loggedUser) {
@@ -74,7 +73,6 @@ class FieboothController {
       }
 
       await Future.delayed(const Duration(seconds: 1));
-      counter++;
     }
   }
 
@@ -83,25 +81,25 @@ class FieboothController {
     if (cookieData != null) {
       if (cookieData.containsKey("userToken")) {
         try {
-          String userToken = cookieData["userToken"]??"";
-    
+          String userToken = cookieData["userToken"] ?? "";
+
           UserModel? user = await whoAmI(userToken);
           if (user != null) {
             try {
-              user.userLoginDate = DateTime.tryParse(cookieData["userDate"]??"");
-            } on FormatException catch (e){
+              user.userLoginDate =
+                  DateTime.tryParse(cookieData["userDate"] ?? "");
+            } on FormatException catch (e) {
+              e;
               user.userLoginDate = DateTime.now();
             }
             print("user connected ${user.userToken}");
             //user now logged
             FieboothController.loggedUser = user;
-            
           }
-        }catch(e) {
+        } catch (e) {
           print("The token is timed out $e");
           userLogout();
         }
-        
       }
     }
   }
@@ -112,7 +110,10 @@ class FieboothController {
     http.Response response = await http.get(reqUri, headers: headers);
     if (response.statusCode == 200) {
       Map<String, dynamic> responseContent = jsonDecode(response.body);
-      UserModel user = UserModel(userName: responseContent["username"], userPassword: "", userToken: userToken);
+      UserModel user = UserModel(
+          userName: responseContent["username"],
+          userPassword: "",
+          userToken: userToken);
       user = _handleAdministrator(user);
       return user;
     } else {
@@ -122,24 +123,24 @@ class FieboothController {
 
   UserModel _handleAdministrator(UserModel user) {
     if (user.userName == "admin") {
-        user.userIsAdmin = true;
-      }
-      return user;
+      user.userIsAdmin = true;
+    }
+    return user;
   }
-  Map<String, String> getBearerHeader([String token=""]) {
+
+  Map<String, String> getBearerHeader([String token = ""]) {
     if (FieboothController.loggedUser != null) {
       return {
         "Authorization": "Bearer ${FieboothController.loggedUser!.userToken}",
       };
     } else {
-      if (token!="") {
+      if (token != "") {
         return {
           "Authorization": "Bearer ${token}",
         };
-      }else {
+      } else {
         throw Exception("Not connected Exception");
       }
-      
     }
   }
 
@@ -273,17 +274,13 @@ class FieboothController {
     http.Response response = await http.get(photoUri, headers: headers);
     if (response.statusCode == 200) {
       // Get the file data as bytes
-        Uint8List fileData = response.bodyBytes;
-
-        // Save the file using file_saver
-        await FileSaver.instance.saveFile(name: photoId, bytes: fileData);
+      Uint8List fileData = response.bodyBytes;
+      print("download done");
+      // Save the file using file_saver
+      await FileSaver.instance.saveFile(name: photoId, bytes: fileData);
     } else {
       throw Exception("Request Error : Not Authorized !");
     }
-   
-    
-
-
   }
 
   Future<ConfigModel> getSettings() async {
@@ -342,16 +339,19 @@ class FieboothController {
       setSetting("contrast", oldSettings.contrast, newSettings.contrast),
     ]);
   }
+
   Future createNewUser(String userName, String password) async {
     if (isUserAdmin()) {
       Uri reqUri = _getUri("/users/new");
       Map<String, String> headers = getBearerHeader();
       headers["Content-Type"] = "application/json; charset=UTF-8";
-      http.Response response = await http.post(reqUri, headers: headers, body: jsonEncode({
-        "username" : userName,
-        "password" : password,
-        "hashpassword" : "",
-      }));
+      http.Response response = await http.post(reqUri,
+          headers: headers,
+          body: jsonEncode({
+            "username": userName,
+            "password": password,
+            "hashpassword": "",
+          }));
       if (response.statusCode == 200) {
         //
       } else {
@@ -359,6 +359,7 @@ class FieboothController {
       }
     }
   }
+
   Future deleteUserPhoto(String userName) async {
     if (isUserAdmin()) {
       Uri reqUri = _getUri("/images/user/$userName");
@@ -371,6 +372,7 @@ class FieboothController {
       }
     }
   }
+
   Future deleteAllphotos() async {
     if (isUserAdmin()) {
       Uri reqUri = _getUri("/images/all");
@@ -380,6 +382,101 @@ class FieboothController {
         //
       } else {
         throw Exception("Request Error : Not Authorized !");
+      }
+    }
+  }
+
+  Future<String?> getLogs() async {
+    if (isUserAdmin()) {
+      Uri reqUri = _getUri("/logs");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.get(reqUri, headers: headers);
+      if (response.statusCode == 200) {
+        String responseContent = jsonDecode(response.body);
+        return responseContent;
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
+    return null;
+  }
+
+  Stream<DownloadStatus> downloadUserPhotos(String user) async* {
+    Map<String, String> headers = getBearerHeader();
+    Uri downloadUri = _getUri("/images/download/$user");
+    DownloadStatus downloadStatus = DownloadStatus(
+      progress: 0,
+      error: "",
+      status: "DOWNLOADING",
+    );
+    print("COUCOU ${downloadStatus.progress} ${downloadUri.toString()}");
+    Dio().getUri(
+      downloadUri,
+      options: Options(
+        headers: headers,
+        responseType: ResponseType.stream
+      ),
+      onReceiveProgress: (int count, int total) {
+        downloadStatus.progress =  (count / total * 100).floor();
+      }
+    ).then((response) async {
+      (response.data as ResponseBody).stream.listen((event) async {
+        await FileSaver.instance.saveFile(name: "photos_$user.zip", bytes: event);
+      });
+      print("download finished");
+      downloadStatus.progress = 100;
+    });
+    while (downloadStatus.progress < 100) {
+      yield downloadStatus;
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+  }
+
+  Future compressUserPhoto(String user) async {
+    Map<String, String> headers = getBearerHeader();
+    Uri downloadUri = _getUri("/images/compress/$user");
+    http.Response response = await http.get(downloadUri, headers: headers);
+    if (response.statusCode == 200) {
+      // Get the file data as bytes
+      print("compression start successfully");
+    } else {
+      throw Exception("Request Error : Not Authorized !");
+    }
+  }
+
+  Future<DownloadStatus?> getDownloadStatus(String user) async {
+    if (isUserAdmin()) {
+      Uri reqUri = _getUri("/images/download/$user/status");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.get(reqUri, headers: headers);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseContent = jsonDecode(response.body);
+        print(responseContent);
+        return DownloadStatus.fromObject(responseContent);
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
+    return null;
+  }
+
+  Stream<DownloadStatus> downloadAll(String user) async* {
+    // get the first status to know what to do
+    DownloadStatus? downloadStatus = await getDownloadStatus(user);
+    if (downloadStatus != null) {
+      while (downloadStatus!.status != "DONE") {
+        downloadStatus = await getDownloadStatus(user);
+        if (downloadStatus!.status == "UNZIPPED") {
+          // Photos ae not zipped so zip the file
+          await compressUserPhoto(user);
+        } else if (downloadStatus.status == "READY") {
+          // launch the download
+          yield* downloadUserPhotos(user);
+          downloadStatus =
+              DownloadStatus(status: "DONE", progress: 100, error: "");
+        }
+        yield downloadStatus;
+        await Future.delayed(const Duration(milliseconds: 500));
       }
     }
   }

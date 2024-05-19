@@ -25,6 +25,7 @@ class _ActionPageState extends State<ActionPage> {
   GlobalKey<FormFieldState> _deleteUsersKey = GlobalKey<FormFieldState>();
   GlobalKey<FormFieldState> _uploadeUserkey = GlobalKey<FormFieldState>();
   String _deleteUserName = "";
+  String _uploadUserNamee = "";
   bool _wait = false;
   List<String> _users = [];
   Future _updateUserList() async {
@@ -86,7 +87,9 @@ class _ActionPageState extends State<ActionPage> {
       SizedBox(
         height: 10,
       ),
-      ActionButton.sideMenu("Voir les logs", () => null),
+      ActionButton.sideMenu("Voir les logs", () {
+        Navigator.pushNamed(context, "/logs");
+      }),
       SizedBox(
         height: 10,
       ),
@@ -166,7 +169,7 @@ class _ActionPageState extends State<ActionPage> {
       SimpleDropDown(key: _uploadeUserkey,
         items:  List.from(_users),
         onChange: (value) {
-          
+          _uploadUserNamee = value;
         },),
       SizedBox(
         height: 10,
@@ -175,7 +178,9 @@ class _ActionPageState extends State<ActionPage> {
       SizedBox(
         height: 15,
       ),
-      ActionButton.sideMenu("Télécharger", () => null),
+      ActionButton.sideMenu("Télécharger", () {
+        Navigator.pushNamed(context, "/download_all", arguments: _uploadUserNamee);
+      }),
       SizedBox(
         height: 15,
       ),
