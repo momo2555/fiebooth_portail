@@ -31,16 +31,16 @@ class _ActionPageState extends State<ActionPage> {
   Future _updateUserList() async {
     _wait = true;
     _fieboothController.getUserList().then((value) {
-      if (value!=null) {
-        _deleteUsersKey.currentState!.didChange(value.isNotEmpty ? value.first : "");
-        _uploadeUserkey.currentState!.didChange(value.isNotEmpty ? value.first : "");
-       _users = value;
-      setState(() {
-        _wait = false;
-      });
+      if (value != null) {
+        _deleteUsersKey.currentState!
+            .didChange(value.isNotEmpty ? value.first : "");
+        _uploadeUserkey.currentState!
+            .didChange(value.isNotEmpty ? value.first : "");
+        _users = value;
+        setState(() {
+          _wait = false;
+        });
       }
-      
-      
     });
   }
 
@@ -84,23 +84,24 @@ class _ActionPageState extends State<ActionPage> {
   List<Widget> get _otherBloc {
     return [
       SimpleText.labelTitle("Autres"),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
       ActionButton.sideMenu("Voir les logs", () {
         Navigator.pushNamed(context, "/logs");
       }),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
       ActionButton.sideMenu("Imprimer les QRcodes", () {
         _fieboothController.printQrcodes();
       }),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
-      ActionButton.sideMenu("Redémerrer le Fiebooth", () => null),
-      SizedBox(
+      ActionButton.sideMenu(
+          "Redémerrer le Fiebooth", () => _fieboothController.rebootFiebooth()),
+      const SizedBox(
         height: 10,
       ),
       ActionButton.sideMenu("Se déconnecter", () {
@@ -110,7 +111,7 @@ class _ActionPageState extends State<ActionPage> {
           Navigator.pop(context);
         });
       }),
-      SizedBox(
+      const SizedBox(
         height: 10,
       )
     ];
@@ -119,7 +120,7 @@ class _ActionPageState extends State<ActionPage> {
   List<Widget> get _deletionBloc {
     return [
       SimpleText.labelTitle("Suppression"),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
       ActionButton.sideMenu("Suppression de toutes les photos", () {
@@ -130,17 +131,17 @@ class _ActionPageState extends State<ActionPage> {
           Navigator.pop(context);
         });
       }),
-      SizedBox(
+      const SizedBox(
         height: 15,
       ),
       SimpleDropDown(
         key: _deleteUsersKey,
-        items:  List.from(_users),
+        items: List.from(_users),
         onChange: (value) {
           _deleteUserName = value;
         },
       ),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
       ActionButton.sideMenu("Supprimer les photos de l'utilisateur", () {
@@ -163,25 +164,28 @@ class _ActionPageState extends State<ActionPage> {
   List<Widget> get _uploadCloudBloc {
     return [
       SimpleText.labelTitle("Envoie des images dans le Cloud"),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
-      SimpleDropDown(key: _uploadeUserkey,
-        items:  List.from(_users),
+      SimpleDropDown(
+        key: _uploadeUserkey,
+        items: List.from(_users),
         onChange: (value) {
           _uploadUserNamee = value;
-        },),
-      SizedBox(
+        },
+      ),
+      const SizedBox(
         height: 10,
       ),
       ActionButton.sideMenu("Envoyer", () => null),
-      SizedBox(
+      const SizedBox(
         height: 15,
       ),
       ActionButton.sideMenu("Télécharger", () {
-        Navigator.pushNamed(context, "/download_all", arguments: _uploadUserNamee);
+        Navigator.pushNamed(context, "/download_all",
+            arguments: _uploadUserNamee);
       }),
-      SizedBox(
+      const SizedBox(
         height: 15,
       ),
     ];
@@ -190,7 +194,7 @@ class _ActionPageState extends State<ActionPage> {
   List<Widget> get _createUserBloc {
     return [
       SimpleText.labelTitle("Utilisateurs"),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
       SimpleInput(
@@ -201,7 +205,7 @@ class _ActionPageState extends State<ActionPage> {
         },
         controller: _newUserNameController,
       ),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
       SimpleInput(
@@ -213,7 +217,7 @@ class _ActionPageState extends State<ActionPage> {
         },
         controller: _newUserPasswordController,
       ),
-      SizedBox(
+      const SizedBox(
         height: 10,
       ),
       ActionButton.sideMenu("Nouvel utilisateur", () async {
@@ -232,7 +236,7 @@ class _ActionPageState extends State<ActionPage> {
               "L'utilisateur a été créé avec succès", "Confirmation");
         } catch (e) {}
       }),
-      SizedBox(
+      const SizedBox(
         height: 15,
       )
     ];

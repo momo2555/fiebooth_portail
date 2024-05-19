@@ -14,7 +14,7 @@ import 'package:http/http.dart' as http;
 class FieboothController {
   final FieboothCookie _fieboothCookie = FieboothCookie();
   static UserModel? loggedUser;
-  final String _client = "portail.fiebooth:5000";
+  final String _client = "192.168.1.52:5000";
   FieboothController() {
     print("base URI = ${Uri.base}");
   }
@@ -480,4 +480,17 @@ class FieboothController {
       }
     }
   }
+  
+  Future rebootFiebooth() async {
+    if (isUserAdmin()) {
+      Uri reqUri = _getUri("/reboot");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.get(reqUri, headers: headers);
+      if (response.statusCode == 200) {
+        print("Fiebooth rebooth successfully");
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    }
+    }
 }
