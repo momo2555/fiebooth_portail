@@ -4,10 +4,7 @@ import 'package:fiebooth_portail/components/simple_input.dart';
 import 'package:fiebooth_portail/components/simple_text.dart';
 import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:fiebooth_portail/utils/dialog_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class ActionPage extends StatefulWidget {
   const ActionPage({super.key});
@@ -17,13 +14,13 @@ class ActionPage extends StatefulWidget {
 }
 
 class _ActionPageState extends State<ActionPage> {
-  FieboothController _fieboothController = FieboothController();
+  final FieboothController _fieboothController = FieboothController();
   String _newUserPassword = "";
   String _newUserName = "";
-  TextEditingController _newUserPasswordController = TextEditingController();
-  TextEditingController _newUserNameController = TextEditingController();
-  GlobalKey<FormFieldState> _deleteUsersKey = GlobalKey<FormFieldState>();
-  GlobalKey<FormFieldState> _uploadeUserkey = GlobalKey<FormFieldState>();
+  final TextEditingController _newUserPasswordController = TextEditingController();
+  final TextEditingController _newUserNameController = TextEditingController();
+  final GlobalKey<FormFieldState> _deleteUsersKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> _uploadeUserkey = GlobalKey<FormFieldState>();
   String _deleteUserName = "";
   String _uploadUserNamee = "";
   bool _wait = false;

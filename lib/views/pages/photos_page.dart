@@ -2,8 +2,6 @@ import 'package:fiebooth_portail/components/simple_text.dart';
 import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class PhotosPage extends StatefulWidget {
   const PhotosPage({super.key});
@@ -13,11 +11,10 @@ class PhotosPage extends StatefulWidget {
 }
 
 class _PhotosPageState extends State<PhotosPage> {
-  FieboothController _fieboothController = FieboothController();
+  final FieboothController _fieboothController = FieboothController();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _fieboothController.updateImageList();
   }
@@ -60,7 +57,7 @@ class _PhotosPageState extends State<PhotosPage> {
         ];
         return Container(
           child: GridView.count(
-            padding: EdgeInsets.all(15),
+            padding: const EdgeInsets.all(15),
             crossAxisCount: 3,
             childAspectRatio: 1,
             mainAxisSpacing: 10,

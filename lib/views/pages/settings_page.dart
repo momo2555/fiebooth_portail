@@ -5,11 +5,7 @@ import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:fiebooth_portail/models/config_model.dart';
 import 'package:fiebooth_portail/utils/dialog_utils.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -19,13 +15,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  FieboothController _fieboothController = FieboothController();
+  final FieboothController _fieboothController = FieboothController();
   ConfigModel _config = Globals.config;
   bool _wait = false;
   bool _disposed = false;
-  TextEditingController _wifiPasswordController = TextEditingController();
-  TextEditingController _wifiSsidController = TextEditingController();
-  TextEditingController _userTextController = TextEditingController();
+  final TextEditingController _wifiPasswordController = TextEditingController();
+  final TextEditingController _wifiSsidController = TextEditingController();
+  final TextEditingController _userTextController = TextEditingController();
   Widget _configTitle(String title) {
     return Row(
       children: [SimpleText.labelTitle(title)],

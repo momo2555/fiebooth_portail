@@ -5,8 +5,6 @@ import 'package:fiebooth_portail/models/user_model.dart';
 import 'package:fiebooth_portail/utils/error_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class SigninView extends StatefulWidget {
   const SigninView({super.key});
@@ -27,7 +25,7 @@ class _SigninViewState extends State<SigninView> {
         alignment: Alignment.center,
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
                 image: AssetImage("assets/images/background.jpg"),
@@ -40,11 +38,11 @@ class _SigninViewState extends State<SigninView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image(
+                  const Image(
                     image: AssetImage("assets/images/logo.png"),
                     width: 245,
                   ),
-                  SizedBox(height: 120),
+                  const SizedBox(height: 120),
                   SimpleInput(
                     style: "light",
                     placeholder: "User Name",
@@ -52,7 +50,7 @@ class _SigninViewState extends State<SigninView> {
                       _login = value;
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   SimpleInput(
@@ -63,7 +61,7 @@ class _SigninViewState extends State<SigninView> {
                       _password = value;
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   ActionButton.smallRounded(
@@ -72,15 +70,15 @@ class _SigninViewState extends State<SigninView> {
                       UserModel user =
                           UserModel(userName: _login, userPassword: _password);
                       try {
-                        UserModel? response_user =
+                        UserModel? responseUser =
                             await fiebooth.userLogin(user);
-                        if (response_user != null &&
-                            response_user.userToken != "") {
+                        if (responseUser != null &&
+                            responseUser.userToken != "") {
                           //Navigator.pushNamed(context, "/home");
                         }
                       } on LoginException catch (e) {
                         Fluttertoast.showToast(
-                          msg: "${e.toString()}",
+                          msg: e.toString(),
                           backgroundColor: Theme.of(context).colorScheme.error,
                           textColor: Theme.of(context).colorScheme.onError,
                           webBgColor: Theme.of(context).colorScheme.error.toString(),

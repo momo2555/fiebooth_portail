@@ -2,8 +2,6 @@ import 'package:fiebooth_portail/components/simple_text.dart';
 import 'package:fiebooth_portail/utils/dialog_utils.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class PhotosLengthIndicator extends StatefulWidget {
   const PhotosLengthIndicator({super.key});

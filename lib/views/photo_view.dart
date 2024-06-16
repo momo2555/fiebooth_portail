@@ -2,8 +2,6 @@ import 'package:fiebooth_portail/components/simple_text.dart';
 import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:fiebooth_portail/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class PhotoView extends StatefulWidget {
   const PhotoView({super.key, required this.photo});
@@ -13,7 +11,7 @@ class PhotoView extends StatefulWidget {
 }
 
 class _PhotoViewState extends State<PhotoView> {
-  FieboothController _fieboothController = FieboothController();
+  final FieboothController _fieboothController = FieboothController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +76,7 @@ class _PhotoViewState extends State<PhotoView> {
                 loadingBuilder:
                     (context, Widget child, ImageChunkEvent? loadingProgress) {
                   if (loadingProgress != null) {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   } else {
