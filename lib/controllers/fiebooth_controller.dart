@@ -38,12 +38,13 @@ class FieboothController {
       user.userTokenType = responseContent["token_type"];
       user.userLoginDate = DateTime.now();
       // TODO : define admin rank in the api side
-      user = _handleAdministrator(user);
+      user = _handleUserPrevilege(user);
       // create the cookie
       _fieboothCookie.saveUser(user);
       print(
           "STATUS CODE = ${response.statusCode} userToken = ${user.userToken}");
       FieboothController.loggedUser = user;
+      _handleDefaultImagesList(user);
       return user;
     } else {
       throw LoginException();
@@ -95,6 +96,7 @@ class FieboothController {
             print("user connected ${user.userToken}");
             //user now logged
             FieboothController.loggedUser = user;
+            _handleDefaultImagesList(user);
           }
         } catch (e) {
           print("The token is timed out $e");
@@ -114,18 +116,29 @@ class FieboothController {
           userName: responseContent["username"],
           userPassword: "",
           userToken: userToken);
-      user = _handleAdministrator(user);
+      user = _handleUserPrevilege(user);
       return user;
     } else {
       throw Exception("Request Error : Not Authorized !");
     }
   }
 
-  UserModel _handleAdministrator(UserModel user) {
+  UserModel _handleUserPrevilege(UserModel user) {
     if (user.userName == "admin") {
       user.userIsAdmin = true;
+      Globals.isUserAdmin.value = true;
+    } else if (user.userName == "guest") {
+      user.userIsGuest = true;
     }
     return user;
+  }
+
+  void _handleDefaultImagesList(UserModel user) {
+    if(user.userName == "admin") {
+      Globals.selectedUser = "all";
+    }else {
+      Globals.selectedUser = user.userName??"guest";
+    }
   }
 
   Map<String, String> getBearerHeader([String token = ""]) {
@@ -237,11 +250,11 @@ class FieboothController {
         throw Exception("Request Error : Not Authorized !");
       }
     }
-    return null;
+    return [""];
   }
 
   Future<dynamic> getSetting(String settingName) async {
-    if (isUserAdmin()) {
+    
       Uri reqUri = _getUri("/setting/$settingName");
       Map<String, String> headers = getBearerHeader();
       http.Response response = await http.get(reqUri, headers: headers);
@@ -251,7 +264,7 @@ class FieboothController {
       } else {
         throw Exception("Request Error : Not Authorized !");
       }
-    }
+    
   }
 
   Future printQrcodes() async {
@@ -480,7 +493,7 @@ class FieboothController {
       }
     }
   }
-  
+
   Future rebootFiebooth() async {
     if (isUserAdmin()) {
       Uri reqUri = _getUri("/reboot");

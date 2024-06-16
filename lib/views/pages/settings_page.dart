@@ -5,9 +5,11 @@ import 'package:fiebooth_portail/controllers/fiebooth_controller.dart';
 import 'package:fiebooth_portail/models/config_model.dart';
 import 'package:fiebooth_portail/utils/dialog_utils.dart';
 import 'package:fiebooth_portail/utils/global_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -37,15 +39,15 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Column(children: children),
     );
   }
+
   void _updateTextInputs() {
-    _wifiPasswordController.text = _config.wifiPassword??"";
-    _wifiSsidController.text = _config.wifiSsid??"";
-    _userTextController.text = _config.userText??"";
+    _wifiPasswordController.text = _config.wifiPassword ?? "";
+    _wifiSsidController.text = _config.wifiSsid ?? "";
+    _userTextController.text = _config.userText ?? "";
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _updateTextInputs();
     _disposed = false;
@@ -65,7 +67,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _disposed = true;
   }
@@ -87,87 +88,101 @@ class _SettingsPageState extends State<SettingsPage> {
                     //value: _config.userText ?? "",
                     controller: _userTextController,
                     onChange: (value) {
-                      
-                        _config.userText = value;
-                      
+                      _config.userText = value;
                     },
                   )
                 ]),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
-                _configBloc([
-                  _configTitle("Paramètres réseau Wifi"),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: SimpleText.label("SSID"),
-                      ),
-                      Flexible(
-                        child: SimpleInput(
-                          style: "filled",
-                          placeholder: "SSID",
-                          //value: _config.wifiSsid ?? "",
-                          controller: _wifiSsidController,
-                          onChange: (value) {
-                           
-                              _config.wifiSsid = value;
-                            
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: SimpleText.label("MDP"),
-                      ),
-                      Flexible(
-                        child: SimpleInput(
-                          style: "filled",
-                          type: "password",
-                          placeholder: "MDP",
-                          controller: _wifiPasswordController,
-                          //value: _config.wifiPassword ?? "",
-                          onChange: (value) {
-                            
-                              _config.wifiPassword = value;
-                            
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                ]),
-                SizedBox(
-                  height: 15,
-                ),
+                // _configBloc([
+                //   _configTitle("Paramètres réseau Wifi"),
+                //   Row(
+                //     children: [
+                //       Padding(
+                //         padding: const EdgeInsets.symmetric(horizontal: 15),
+                //         child: SimpleText.label("SSID"),
+                //       ),
+                //       Flexible(
+                //         child: SimpleInput(
+                //           style: "filled",
+                //           placeholder: "SSID",
+                //           //value: _config.wifiSsid ?? "",
+                //           controller: _wifiSsidController,
+                //           onChange: (value) {
+
+                //               _config.wifiSsid = value;
+
+                //           },
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                //   SizedBox(
+                //     height: 10,
+                //   ),
+                //   Row(
+                //     children: [
+                //       Padding(
+                //         padding: const EdgeInsets.symmetric(horizontal: 15),
+                //         child: SimpleText.label("MDP"),
+                //       ),
+                //       Flexible(
+                //         child: SimpleInput(
+                //           style: "filled",
+                //           type: "password",
+                //           placeholder: "MDP",
+                //           controller: _wifiPasswordController,
+                //           //value: _config.wifiPassword ?? "",
+                //           onChange: (value) {
+
+                //               _config.wifiPassword = value;
+
+                //           },
+                //         ),
+                //       ),
+                //     ],
+                //   )
+                // ]),
+                // SizedBox(
+                //   height: 15,
+                // ),
                 _configBloc([
                   _configTitle("Paramètres image"),
-                  SimpleText.label("contraste imprimante :"),
-                  Slider(
-                    value: ((_config.defaultContrast ?? 0) + 6) / 12,
-                    onChanged: (val) {
-                      setState(() {
-                        _config.defaultContrast = (val * 12 - 6).round();
-                      });
-                    },
-                  ),
-                  SimpleText.label("luminosité imprimante :"),
-                  Slider(
-                    value: ((_config.defaultBrightness ?? 0) + 6) / 12,
-                    onChanged: (val) {
-                      setState(() {
-                        _config.defaultBrightness = (val * 12 - 6).round();
-                      });
-                    },
-                  ),
+                  ValueListenableBuilder(
+                      valueListenable: Globals.isUserAdmin,
+                      builder: (context, isAdmin, child) {
+                        if (isAdmin) {
+                          return Column(
+                            children: [
+                              SimpleText.label("contraste imprimante :"),
+                              Slider(
+                                value:
+                                    ((_config.defaultContrast ?? 0) + 6) / 12,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _config.defaultContrast =
+                                        (val * 12 - 6).round();
+                                  });
+                                },
+                              ),
+                              SimpleText.label("luminosité imprimante :"),
+                              Slider(
+                                value:
+                                    ((_config.defaultBrightness ?? 0) + 6) / 12,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _config.defaultBrightness =
+                                        (val * 12 - 6).round();
+                                  });
+                                },
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
                   SimpleText.label("contraste :"),
                   Slider(
                     value: ((_config.contrast ?? 0) + 6) / 12,
@@ -187,48 +202,63 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                   ),
                 ]),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
-                _configBloc([
-                  _configTitle("Autres"),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: SimpleText.label("Utiliser le clavier"),
-                      ),
-                      Switch(
-                        value: _config.useKeyboard ?? true,
-                        onChanged: (val) {
-                          setState(() {
-                            _config.useKeyboard = val;
-                          });
-                        },
-                      ),
-                    ],
-                  )
-                ]),
-                SizedBox(
+                ValueListenableBuilder(
+                    valueListenable: Globals.isUserAdmin,
+                    builder: (context, isAdmin, child) {
+                      if (isAdmin) {
+                        return _configBloc([
+                          _configTitle("Autres"),
+                          Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15),
+                                child: SimpleText.label("Utiliser le clavier"),
+                              ),
+                              Switch(
+                                value: _config.useKeyboard ?? true,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _config.useKeyboard = val;
+                                  });
+                                },
+                              ),
+                            ],
+                          )
+                        ]);
+                      }else {
+                        return Container();
+                      }
+                    }),
+                const SizedBox(
                   height: 15,
                 ),
                 ActionButton.action("Sauvegarder", () async {
                   _wait = true;
-                  await _fieboothController.setSettings(Globals.config, _config);
+                  await _fieboothController.setSettings(
+                      Globals.config, _config);
                   Globals.config = ConfigModel.copy(_config);
                   _wait = false;
-                  shwoInfoDialog("Enregistrement des nouveaux paramètres effectué avec succès", "Confirmation");
-                  
+                  shwoInfoDialog(
+                      "Enregistrement des nouveaux paramètres effectué avec succès",
+                      "Confirmation");
                 }),
               ],
             ),
           ),
         ),
-        _wait?
-        Container(
-          color: Theme.of(context).primaryColorDark.withAlpha(140),
-          child: const Center(child: CircularProgressIndicator()),
-        ):const SizedBox(height: 0,width: 0,),
+        _wait
+            ? Container(
+                color: Theme.of(context).primaryColorDark.withAlpha(140),
+                child: const Center(child: CircularProgressIndicator()),
+              )
+            : const SizedBox(
+                height: 0,
+                width: 0,
+              ),
       ],
     );
   }

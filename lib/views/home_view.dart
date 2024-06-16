@@ -7,7 +7,6 @@ import 'package:fiebooth_portail/views/pages/photos_page.dart';
 import 'package:fiebooth_portail/views/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 
-
 class PageInfo {
   final Widget page;
   final Widget leftIcon;
@@ -44,20 +43,18 @@ class _HomeViewState extends State<HomeView> {
           title: SimpleText.BigTitle("Photos"),
           topBgColor: Theme.of(context).primaryColor,
           leftIcon: IconButton(
-              color: Theme.of(context).primaryColorLight,
-              icon: const Icon(
-                Icons.menu,
-                size: 40,
-              ),
-              onPressed: () {
-                _scaffoldKey.currentState!.openDrawer();
-              },
+            color: Theme.of(context).primaryColorLight,
+            icon: const Icon(
+              Icons.menu,
+              size: 40,
             ),
-            
+            onPressed: () {
+              _scaffoldKey.currentState!.openDrawer();
+            },
+          ),
           page: PhotosPage(),
           menu: Container(),
-          floatingButton:
-              Container(),
+          floatingButton: Container(),
           rightIcon: PhotosLengthIndicator(),
         ),
         PageInfo(
@@ -66,8 +63,7 @@ class _HomeViewState extends State<HomeView> {
           leftIcon: Container(),
           page: SettingsPage(),
           menu: Container(),
-          floatingButton:
-              Container(),
+          floatingButton: Container(),
         ),
         PageInfo(
           title: SimpleText.BigTitle("Action"),
@@ -99,13 +95,22 @@ class _HomeViewState extends State<HomeView> {
               backgroundColor: page.topBgColor,
               elevation: 0,
               leadingWidth: 40,
-              leading: 
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 0),
-                  child: page.leftIcon,
-                ),
-              actions: [page.rightIcon??Container()],
-
+              leading: ValueListenableBuilder(
+                valueListenable: Globals.isUserAdmin,
+                builder: ((context, isAdmin, child) {
+                  if (isAdmin) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 0),
+                      child: page.leftIcon,
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
+              ),
+              actions: [
+                page.rightIcon ?? Container(),
+              ],
             ),
             bottomNavigationBar: BottomNavigationBar(
               backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -119,13 +124,14 @@ class _HomeViewState extends State<HomeView> {
               type: BottomNavigationBarType.fixed,
               //selectedFontSize: 15,
               //unselectedFontSize: 15,
-              
+
               iconSize: 28,
-              selectedLabelStyle: TextStyle(fontFamily: "Smoothie Shoppe", fontSize: 18),
-              unselectedLabelStyle: TextStyle(fontFamily: "Smoothie Shoppe", fontSize: 18),
+              selectedLabelStyle:
+                  TextStyle(fontFamily: "Smoothie Shoppe", fontSize: 18),
+              unselectedLabelStyle:
+                  TextStyle(fontFamily: "Smoothie Shoppe", fontSize: 18),
               items: [
                 BottomNavigationBarItem(
-                  
                   icon: Globals.homeIndex.value == 0
                       ? Icon(Icons.photo_rounded)
                       : Icon(Icons.photo_rounded),

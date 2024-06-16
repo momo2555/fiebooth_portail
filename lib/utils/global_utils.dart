@@ -5,6 +5,7 @@ import 'package:fiebooth_portail/models/user_model.dart';
 class Globals {
   static bool commandPopupOn = false;
   static var homeIndex =  ValueNotifier<int>(0);
+  static var isUserAdmin = ValueNotifier<bool>(false);
   static UserModel? user;
   static var goToKart = ValueNotifier<bool>(false);
   static var connexionWait = ValueNotifier<bool>(false);

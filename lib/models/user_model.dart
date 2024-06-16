@@ -5,6 +5,7 @@ class UserModel {
   String? userTokenType;
   DateTime? userLoginDate;
   bool? userIsAdmin;
+  bool? userIsGuest;
 
   UserModel({this.userName, this.userPassword, this.userToken});
 
@@ -15,6 +16,7 @@ class UserModel {
     userTokenType = user.userTokenType;
     userLoginDate = user.userLoginDate;
     userIsAdmin = user.userIsAdmin;
+    userIsGuest = user.userIsGuest;
   }
   /*@override
   bool operator==(Object other) {
