@@ -43,13 +43,16 @@ class _ActionPageState extends State<ActionPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _updateUserList();
+    if (FieboothController.loggedUser!.userIsAdmin??false) {
+      _updateUserList();
+    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isAdmin = FieboothController.loggedUser!.userIsAdmin??false;
     return Stack(
       children: [
         SingleChildScrollView(
@@ -57,9 +60,9 @@ class _ActionPageState extends State<ActionPage> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
               children: [
-                ..._createUserBloc,
-                ..._uploadCloudBloc,
-                ..._deletionBloc,
+                isAdmin ? _createUserBloc : Container(),
+                isAdmin ? _uploadCloudBloc : Container(),
+                isAdmin ? _deletionBloc : Container(),
                 ..._otherBloc,
               ],
             ),
@@ -79,8 +82,9 @@ class _ActionPageState extends State<ActionPage> {
   }
 
   List<Widget> get _otherBloc {
+    bool isAdmin = FieboothController.loggedUser!.userIsAdmin??false;
     return [
-      SimpleText.labelTitle("Autres"),
+      isAdmin ? SimpleText.labelTitle("Autres") : Container(),
       const SizedBox(
         height: 10,
       ),
@@ -90,12 +94,12 @@ class _ActionPageState extends State<ActionPage> {
       const SizedBox(
         height: 10,
       ),
-      ActionButton.sideMenu("Imprimer les QRcodes", () {
+      isAdmin ? ActionButton.sideMenu("Imprimer les QRcodes", () {
         _fieboothController.printQrcodes();
-      }),
-      const SizedBox(
+      }) : Container(),
+      isAdmin ? const SizedBox(
         height: 10,
-      ),
+      ) : Container(),
       ActionButton.sideMenu(
           "Redémerrer le Fiebooth", () => _fieboothController.rebootFiebooth()),
       const SizedBox(
@@ -114,8 +118,9 @@ class _ActionPageState extends State<ActionPage> {
     ];
   }
 
-  List<Widget> get _deletionBloc {
-    return [
+  Widget get _deletionBloc {
+    return Column(
+      children: [
       SimpleText.labelTitle("Suppression"),
       const SizedBox(
         height: 10,
@@ -132,7 +137,7 @@ class _ActionPageState extends State<ActionPage> {
         height: 15,
       ),
       SimpleDropDown(
-        key: _deleteUsersKey,
+        dropDownKey: _deleteUsersKey,
         items: List.from(_users),
         onChange: (value) {
           _deleteUserName = value;
@@ -155,17 +160,19 @@ class _ActionPageState extends State<ActionPage> {
           } catch (e) {}
         });
       })
-    ];
+    ],
+    );
   }
 
-  List<Widget> get _uploadCloudBloc {
-    return [
+  Widget get _uploadCloudBloc {
+    return Column(
+      children: [
       SimpleText.labelTitle("Envoie des images dans le Cloud"),
       const SizedBox(
         height: 10,
       ),
       SimpleDropDown(
-        key: _uploadeUserkey,
+        dropDownKey: _uploadeUserkey,
         items: List.from(_users),
         onChange: (value) {
           _uploadUserNamee = value;
@@ -185,11 +192,12 @@ class _ActionPageState extends State<ActionPage> {
       const SizedBox(
         height: 15,
       ),
-    ];
+    ],
+    ); 
   }
 
-  List<Widget> get _createUserBloc {
-    return [
+  Widget get _createUserBloc {
+    return Column(children: [
       SimpleText.labelTitle("Utilisateurs"),
       const SizedBox(
         height: 10,
@@ -236,6 +244,6 @@ class _ActionPageState extends State<ActionPage> {
       const SizedBox(
         height: 15,
       )
-    ];
+    ],);
   }
 }

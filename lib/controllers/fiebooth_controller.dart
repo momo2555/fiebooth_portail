@@ -126,9 +126,16 @@ class FieboothController {
   UserModel _handleUserPrevilege(UserModel user) {
     if (user.userName == "admin") {
       user.userIsAdmin = true;
+      user.userIsGuest = false;
       Globals.isUserAdmin.value = true;
     } else if (user.userName == "guest") {
       user.userIsGuest = true;
+      user.userIsAdmin = false;
+      Globals.isUserAdmin.value = false;
+    }else {
+      user.userIsGuest = false;
+      user.userIsAdmin = false;
+      Globals.isUserAdmin.value = false;
     }
     return user;
   }

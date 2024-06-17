@@ -9,7 +9,9 @@ class SimpleDropDown extends StatefulWidget {
     this.focusNode,
     this.nextNode,
     this.onChange,
+    this.dropDownKey,
   }) : super(key: key);
+  final GlobalKey? dropDownKey;
   final List<String> items;
   final String? initialValue;
   final FocusNode? focusNode;
@@ -63,7 +65,7 @@ class _SimpleDropDownState extends State<SimpleDropDown> {
   Widget build(BuildContext context) {
     _value = widget.initialValue ?? (widget.items.isNotEmpty? widget.items[0] : "");
     return DropdownButtonFormField(
-      key: widget.key,
+      key: widget.dropDownKey,
       items: widget.items
           .map(
             (e) => DropdownMenuItem<String>(
