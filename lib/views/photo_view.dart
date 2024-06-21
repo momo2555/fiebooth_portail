@@ -14,6 +14,7 @@ class _PhotoViewState extends State<PhotoView> {
   final FieboothController _fieboothController = FieboothController();
   @override
   Widget build(BuildContext context) {
+    bool isGuest = FieboothController.loggedUser!.userIsGuest??false;
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColorDark,
       appBar: AppBar(
@@ -35,14 +36,14 @@ class _PhotoViewState extends State<PhotoView> {
             icon: const Icon(Icons.download),
             color: Theme.of(context).colorScheme.onSurface,
           ),
-          IconButton(
+          !isGuest ? IconButton(
             onPressed: () {
               _fieboothController.printImage(widget.photo);
             },
             icon: const Icon(Icons.print_rounded),
             color: Theme.of(context).colorScheme.onSurface,
-          ),
-          IconButton(
+          ) : Container(),
+          !isGuest ? IconButton(
             onPressed: () {
               showConfirmDialog("Voulez-vous vraiment supprimer cette photo ?", "Suppression", () async {
                   await _fieboothController.deleteImage(widget.photo);
@@ -53,7 +54,7 @@ class _PhotoViewState extends State<PhotoView> {
             },
             icon: const Icon(Icons.hide_image_outlined),
             color: Theme.of(context).colorScheme.onSurface,
-          ),
+          ) : Container(),
         ],
       ),
       body: Container(
