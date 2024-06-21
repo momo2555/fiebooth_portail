@@ -43,6 +43,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Globals.homeIndex.value = 0;
   }
 
   void _initPages(context) {

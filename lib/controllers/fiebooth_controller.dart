@@ -14,7 +14,7 @@ import 'package:http/http.dart' as http;
 class FieboothController {
   final FieboothCookie _fieboothCookie = FieboothCookie();
   static UserModel? loggedUser;
-  final String _client = "192.168.1.52:5000";
+  final String _client = "10.42.0.191:5000";
   FieboothController() {
     print("base URI = ${Uri.base}");
   }
@@ -132,7 +132,7 @@ class FieboothController {
       user.userIsGuest = true;
       user.userIsAdmin = false;
       Globals.isUserAdmin.value = false;
-    }else {
+    } else {
       user.userIsGuest = false;
       user.userIsAdmin = false;
       Globals.isUserAdmin.value = false;
@@ -141,10 +141,10 @@ class FieboothController {
   }
 
   void _handleDefaultImagesList(UserModel user) {
-    if(user.userName == "admin") {
+    if (user.userName == "admin") {
       Globals.selectedUser = "all";
-    }else {
-      Globals.selectedUser = user.userName??"guest";
+    } else {
+      Globals.selectedUser = user.userName ?? "guest";
     }
   }
 
@@ -176,6 +176,23 @@ class FieboothController {
     }
   }
 
+  Future<List<String>?> getUserCurrentPhotos() async {
+    UserModel? loggerUser = FieboothController.loggedUser;
+    if (loggedUser != null) {
+      Uri reqUri = _getUri("/images/currentuser");
+      Map<String, String> headers = getBearerHeader();
+      http.Response response = await http.get(reqUri, headers: headers);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseContent = jsonDecode(response.body);
+        return List.from(responseContent["photos"]);
+      } else {
+        throw Exception("Request Error : Not Authorized !");
+      }
+    } else {
+      throw Exception("Unauthorized : No user logged");
+    }
+  }
+
   Future<List<String>?> getPhotosIdByUser(String user) async {
     UserModel? loggerUser = FieboothController.loggedUser;
     if (loggedUser != null) {
@@ -200,6 +217,11 @@ class FieboothController {
   Future updateImageList() async {
     if (Globals.selectedUser == "all" && isUserAdmin()) {
       Globals.photosList.value = await getAllPhotoIdsList() ?? [];
+    } else if (isTheUserConnected(Globals.selectedUser) &&
+        FieboothController.loggedUser != null &&
+        FieboothController.loggedUser!.userIsGuest != null &&
+        FieboothController.loggedUser!.userIsGuest!) {
+          Globals.photosList.value = await getUserCurrentPhotos() ?? [];
     } else {
       if (isTheUserConnected(Globals.selectedUser) || isUserAdmin()) {
         Globals.photosList.value =
@@ -261,17 +283,15 @@ class FieboothController {
   }
 
   Future<dynamic> getSetting(String settingName) async {
-    
-      Uri reqUri = _getUri("/setting/$settingName");
-      Map<String, String> headers = getBearerHeader();
-      http.Response response = await http.get(reqUri, headers: headers);
-      if (response.statusCode == 200) {
-        Map<String, dynamic> responseContent = jsonDecode(response.body);
-        return responseContent["value"];
-      } else {
-        throw Exception("Request Error : Not Authorized !");
-      }
-    
+    Uri reqUri = _getUri("/setting/$settingName");
+    Map<String, String> headers = getBearerHeader();
+    http.Response response = await http.get(reqUri, headers: headers);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseContent = jsonDecode(response.body);
+      return responseContent["value"];
+    } else {
+      throw Exception("Request Error : Not Authorized !");
+    }
   }
 
   Future printQrcodes() async {
@@ -321,7 +341,7 @@ class FieboothController {
   }
 
   Future setSetting(String setting, oldValue, newValue) async {
-    if (oldValue != newValue && isUserAdmin()) {
+    if (oldValue != newValue) {
       Uri reqUri = _getUri("/setting/edit");
       Map<String, String> headers = getBearerHeader();
       headers["Content-Type"] = "application/json; charset=UTF-8";
@@ -407,7 +427,7 @@ class FieboothController {
   }
 
   Future<String?> getLogs() async {
-    if (isUserAdmin()) {
+    
       Uri reqUri = _getUri("/logs");
       Map<String, String> headers = getBearerHeader();
       http.Response response = await http.get(reqUri, headers: headers);
@@ -417,8 +437,7 @@ class FieboothController {
       } else {
         throw Exception("Request Error : Not Authorized !");
       }
-    }
-    return null;
+    
   }
 
   Stream<DownloadStatus> downloadUserPhotos(String user) async* {
@@ -430,18 +449,14 @@ class FieboothController {
       status: "DOWNLOADING",
     );
     print("COUCOU ${downloadStatus.progress} ${downloadUri.toString()}");
-    Dio().getUri(
-      downloadUri,
-      options: Options(
-        headers: headers,
-        responseType: ResponseType.stream
-      ),
-      onReceiveProgress: (int count, int total) {
-        downloadStatus.progress =  (count / total * 100).floor();
-      }
-    ).then((response) async {
+    Dio().getUri(downloadUri,
+        options: Options(headers: headers, responseType: ResponseType.stream),
+        onReceiveProgress: (int count, int total) {
+      downloadStatus.progress = (count / total * 100).floor();
+    }).then((response) async {
       (response.data as ResponseBody).stream.listen((event) async {
-        await FileSaver.instance.saveFile(name: "photos_$user.zip", bytes: event);
+        await FileSaver.instance
+            .saveFile(name: "photos_$user.zip", bytes: event);
       });
       print("download finished");
       downloadStatus.progress = 100;
@@ -502,15 +517,15 @@ class FieboothController {
   }
 
   Future rebootFiebooth() async {
-    if (isUserAdmin()) {
+    
       Uri reqUri = _getUri("/reboot");
       Map<String, String> headers = getBearerHeader();
       http.Response response = await http.get(reqUri, headers: headers);
       if (response.statusCode == 200) {
-        print("Fiebooth rebooth successfully");
+        print("Fiebooth reboot successfully");
       } else {
         throw Exception("Request Error : Not Authorized !");
       }
-    }
-    }
+    
+  }
 }
