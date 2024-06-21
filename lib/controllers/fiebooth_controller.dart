@@ -16,7 +16,7 @@ class FieboothController {
   static UserModel? loggedUser;
   final String _client = "10.42.0.191:5000";
   FieboothController() {
-    print("base URI = ${Uri.base}");
+    
   }
 
   Uri _getUri(String route) {
@@ -58,6 +58,7 @@ class FieboothController {
 
   Stream<UserModel?> getUserConnected() async* {
     UserModel? streamUserState;
+    await _handleUrlLogin();
     await _handleCookieAutoLogin();
     while (true) {
       if (streamUserState != FieboothController.loggedUser) {
@@ -70,10 +71,22 @@ class FieboothController {
         }
       } else {
         //no user connected check the cookies
+        await _handleUrlLogin();
         await _handleCookieAutoLogin();
       }
 
       await Future.delayed(const Duration(seconds: 1));
+    }
+  }
+  Future<void> _handleUrlLogin() async {
+    print("base URI = ${Uri.base.path}");
+    String path = Uri.base.path;
+    path = path.replaceAll("/", "");
+    if (path != "") {
+      String decode = String.fromCharCodes(base64Decode(path));
+      List<String> sequence = decode.split(";");
+      UserModel user = UserModel(userName: sequence[0], userPassword: sequence[1]);
+      await userLogin(user);
     }
   }
 
