@@ -101,7 +101,7 @@ class _ActionPageState extends State<ActionPage> {
         height: 10,
       ) : Container(),
       ActionButton.sideMenu(
-          "Redémerrer le Fiebooth", () => _fieboothController.rebootFiebooth()),
+          "Redémarrer le Fiebooth", () => _fieboothController.rebootFiebooth()),
       const SizedBox(
         height: 10,
       ),
