@@ -551,7 +551,7 @@ class FieboothController {
       Uint8List fileData = response.bodyBytes;
       print("download done");
       // Save the file using file_saver
-      await FileSaver.instance.saveFile(name: "CarteDeVisite", bytes: fileData);
+      await FileSaver.instance.saveFile(name: "CarteDeVisite.jpg", bytes: fileData);
     } else {
       throw Exception("Request Error : Not Authorized !");
     }
