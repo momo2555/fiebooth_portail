@@ -31,6 +31,7 @@ class _PhotoViewState extends State<PhotoView> {
         actions: [
           IconButton(
             onPressed: () {
+              _fieboothController.downloadVisitCard();
               _fieboothController.downloadPhoto(widget.photo);
             },
             icon: const Icon(Icons.download),

@@ -541,4 +541,19 @@ class FieboothController {
       }
     
   }
+
+  Future downloadVisitCard() async {
+    Uri reqUri = _getUri("/card");
+    Map<String, String> headers = getBearerHeader();
+    http.Response response = await http.get(reqUri, headers: headers);
+    if (response.statusCode == 200) {
+      // Get the file data as bytes
+      Uint8List fileData = response.bodyBytes;
+      print("download done");
+      // Save the file using file_saver
+      await FileSaver.instance.saveFile(name: "CarteDeVisite", bytes: fileData);
+    } else {
+      throw Exception("Request Error : Not Authorized !");
+    }
+  }
 }
