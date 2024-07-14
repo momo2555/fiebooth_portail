@@ -14,7 +14,7 @@ import 'package:http/http.dart' as http;
 class FieboothController {
   final FieboothCookie _fieboothCookie = FieboothCookie();
   static UserModel? loggedUser;
-  final String _client = "10.42.0.191:5000";
+  final String _client = "portail.fiebooth:5000";
   FieboothController() {
     
   }
@@ -261,14 +261,13 @@ class FieboothController {
   }
 
   Future deleteImage(String imageId) async {
-    if (isUserAdmin()) {
+    
       Uri reqUri = _getUri("/image/delete/$imageId");
       Map<String, String> headers = getBearerHeader();
       http.Response response = await http.delete(reqUri, headers: headers);
       if (response.statusCode != 200) {
         throw Exception("Request Error : Not Authorized !");
       }
-    }
   }
 
   Future printImage(String imageId) async {
@@ -300,7 +299,9 @@ class FieboothController {
     Map<String, String> headers = getBearerHeader();
     http.Response response = await http.get(reqUri, headers: headers);
     if (response.statusCode == 200) {
+      
       Map<String, dynamic> responseContent = jsonDecode(response.body);
+      print(response.body);
       return responseContent["value"];
     } else {
       throw Exception("Request Error : Not Authorized !");

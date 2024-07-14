@@ -22,9 +22,9 @@ class _PhotosLengthIndicatorState extends State<PhotosLengthIndicator> {
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: InkWell(
                 onTap: () {
-                  showSimpleDialog(null, ButtonInfo(title: "Ok", action: () {
+                  /*showSimpleDialog(null, ButtonInfo(title: "Ok", action: () {
                     Navigator.pop(context);
-                  }), Container(), SimpleText.titleText("Nombre de photos"),);
+                  }), Container(), SimpleText.titleText("Nombre de photos"),);*/
                 },
                 child: SizedBox(
                   height: 35,

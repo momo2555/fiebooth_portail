@@ -17,7 +17,8 @@ class _ActionPageState extends State<ActionPage> {
   final FieboothController _fieboothController = FieboothController();
   String _newUserPassword = "";
   String _newUserName = "";
-  final TextEditingController _newUserPasswordController = TextEditingController();
+  final TextEditingController _newUserPasswordController =
+      TextEditingController();
   final TextEditingController _newUserNameController = TextEditingController();
   final GlobalKey<FormFieldState> _deleteUsersKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> _uploadeUserkey = GlobalKey<FormFieldState>();
@@ -44,15 +45,14 @@ class _ActionPageState extends State<ActionPage> {
   @override
   void initState() {
     super.initState();
-    if (FieboothController.loggedUser!.userIsAdmin??false) {
+    if (FieboothController.loggedUser!.userIsAdmin ?? false) {
       _updateUserList();
     }
-    
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isAdmin = FieboothController.loggedUser!.userIsAdmin??false;
+    bool isAdmin = FieboothController.loggedUser!.userIsAdmin ?? false;
     return Stack(
       children: [
         SingleChildScrollView(
@@ -82,7 +82,7 @@ class _ActionPageState extends State<ActionPage> {
   }
 
   List<Widget> get _otherBloc {
-    bool isAdmin = FieboothController.loggedUser!.userIsAdmin??false;
+    bool isAdmin = FieboothController.loggedUser!.userIsAdmin ?? false;
     return [
       isAdmin ? SimpleText.labelTitle("Autres") : Container(),
       const SizedBox(
@@ -94,14 +94,23 @@ class _ActionPageState extends State<ActionPage> {
       const SizedBox(
         height: 10,
       ),
-      isAdmin ? ActionButton.sideMenu("Imprimer les QRcodes", () {
-        _fieboothController.printQrcodes();
-      }) : Container(),
-      isAdmin ? const SizedBox(
-        height: 10,
-      ) : Container(),
-      ActionButton.sideMenu(
-          "Redémarrer le Fiebooth", () => _fieboothController.rebootFiebooth()),
+      isAdmin
+          ? ActionButton.sideMenu("Imprimer les QRcodes", () {
+              _fieboothController.printQrcodes();
+            })
+          : Container(),
+      isAdmin
+          ? const SizedBox(
+              height: 10,
+            )
+          : Container(),
+      ActionButton.sideMenu("Redémarrer le Fiebooth", () {
+        showConfirmDialog(
+            "Voulez vraiment supprimer les photos de l'utilisateur $_deleteUserName ?",
+            "Suppression", () async {
+          await _fieboothController.rebootFiebooth();
+        });
+      }),
       const SizedBox(
         height: 10,
       ),
@@ -121,129 +130,131 @@ class _ActionPageState extends State<ActionPage> {
   Widget get _deletionBloc {
     return Column(
       children: [
-      SimpleText.labelTitle("Suppression"),
-      const SizedBox(
-        height: 10,
-      ),
-      ActionButton.sideMenu("Suppression de toutes les photos", () {
-        showConfirmDialog(
-            "Voulez vous vraimenr supprimer toutes les photos, Il sera impossible de les récupérer",
-            "Suppression", () {
-          _fieboothController.deleteAllphotos();
-          Navigator.pop(context);
-        });
-      }),
-      const SizedBox(
-        height: 15,
-      ),
-      SimpleDropDown(
-        dropDownKey: _deleteUsersKey,
-        items: List.from(_users),
-        onChange: (value) {
-          _deleteUserName = value;
-        },
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      ActionButton.sideMenu("Supprimer les photos de l'utilisateur", () {
-        showConfirmDialog(
-            "Voulez vraiment supprimer les photos de l'utilisateur $_deleteUserName ?",
-            "Suppression", () async {
-          try {
-            setState(() {
-              _wait = true;
-            });
-            await _fieboothController.deleteUserPhoto(_deleteUserName);
-            await _updateUserList();
+        SimpleText.labelTitle("Suppression"),
+        const SizedBox(
+          height: 10,
+        ),
+        ActionButton.sideMenu("Suppression de toutes les photos", () {
+          showConfirmDialog(
+              "Voulez vous vraimenr supprimer toutes les photos, Il sera impossible de les récupérer",
+              "Suppression", () {
+            _fieboothController.deleteAllphotos();
             Navigator.pop(context);
-          } catch (e) {}
-        });
-      })
-    ],
+          });
+        }),
+        const SizedBox(
+          height: 15,
+        ),
+        SimpleDropDown(
+          dropDownKey: _deleteUsersKey,
+          items: List.from(_users),
+          onChange: (value) {
+            _deleteUserName = value;
+          },
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        ActionButton.sideMenu("Supprimer les photos de l'utilisateur", () {
+          showConfirmDialog(
+              "Voulez vraiment supprimer les photos de l'utilisateur $_deleteUserName ?",
+              "Suppression", () async {
+            try {
+              setState(() {
+                _wait = true;
+              });
+              await _fieboothController.deleteUserPhoto(_deleteUserName);
+              await _updateUserList();
+              Navigator.pop(context);
+            } catch (e) {}
+          });
+        })
+      ],
     );
   }
 
   Widget get _uploadCloudBloc {
     return Column(
       children: [
-      SimpleText.labelTitle("Envoie des images dans le Cloud"),
-      const SizedBox(
-        height: 10,
-      ),
-      SimpleDropDown(
-        dropDownKey: _uploadeUserkey,
-        items: List.from(_users),
-        onChange: (value) {
-          _uploadUserNamee = value;
-        },
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      ActionButton.sideMenu("Envoyer", () => null),
-      const SizedBox(
-        height: 15,
-      ),
-      ActionButton.sideMenu("Télécharger", () {
-        Navigator.pushNamed(context, "/download_all",
-            arguments: _uploadUserNamee);
-      }),
-      const SizedBox(
-        height: 15,
-      ),
-    ],
-    ); 
+        SimpleText.labelTitle("Envoie des images dans le Cloud"),
+        const SizedBox(
+          height: 10,
+        ),
+        SimpleDropDown(
+          dropDownKey: _uploadeUserkey,
+          items: List.from(_users),
+          onChange: (value) {
+            _uploadUserNamee = value;
+          },
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        ActionButton.sideMenu("Envoyer", () => null),
+        const SizedBox(
+          height: 15,
+        ),
+        ActionButton.sideMenu("Télécharger", () {
+          Navigator.pushNamed(context, "/download_all",
+              arguments: _uploadUserNamee);
+        }),
+        const SizedBox(
+          height: 15,
+        ),
+      ],
+    );
   }
 
   Widget get _createUserBloc {
-    return Column(children: [
-      SimpleText.labelTitle("Utilisateurs"),
-      const SizedBox(
-        height: 10,
-      ),
-      SimpleInput(
-        style: "filled",
-        placeholder: "Nom d'utilisateur",
-        onChange: (value) {
-          _newUserName = value;
-        },
-        controller: _newUserNameController,
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      SimpleInput(
-        style: "filled",
-        placeholder: "Mot de passe",
-        type: "password",
-        onChange: (value) {
-          _newUserPassword = value;
-        },
-        controller: _newUserPasswordController,
-      ),
-      const SizedBox(
-        height: 10,
-      ),
-      ActionButton.sideMenu("Nouvel utilisateur", () async {
-        try {
-          setState(() {
-            _wait = true;
-          });
-          await _fieboothController.createNewUser(
-              _newUserName, _newUserPassword);
-          _newUserNameController.text = "";
-          _newUserPasswordController.text = "";
-          setState(() {
-            _wait = false;
-          });
-          shwoInfoDialog(
-              "L'utilisateur a été créé avec succès", "Confirmation");
-        } catch (e) {}
-      }),
-      const SizedBox(
-        height: 15,
-      )
-    ],);
+    return Column(
+      children: [
+        SimpleText.labelTitle("Utilisateurs"),
+        const SizedBox(
+          height: 10,
+        ),
+        SimpleInput(
+          style: "filled",
+          placeholder: "Nom d'utilisateur",
+          onChange: (value) {
+            _newUserName = value;
+          },
+          controller: _newUserNameController,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        SimpleInput(
+          style: "filled",
+          placeholder: "Mot de passe",
+          type: "password",
+          onChange: (value) {
+            _newUserPassword = value;
+          },
+          controller: _newUserPasswordController,
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        ActionButton.sideMenu("Nouvel utilisateur", () async {
+          try {
+            setState(() {
+              _wait = true;
+            });
+            await _fieboothController.createNewUser(
+                _newUserName, _newUserPassword);
+            _newUserNameController.text = "";
+            _newUserPasswordController.text = "";
+            setState(() {
+              _wait = false;
+            });
+            shwoInfoDialog(
+                "L'utilisateur a été créé avec succès", "Confirmation");
+          } catch (e) {}
+        }),
+        const SizedBox(
+          height: 15,
+        )
+      ],
+    );
   }
 }
